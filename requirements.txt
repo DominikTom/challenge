@@ -1,15 +1,11 @@
-# Zależności runtime + testy (wersje potwierdzone działaniem).
+# Zależności runtime: CLI + warstwa web (Vercel). Wersje potwierdzone działaniem.
+# UWAGA: to jest też lista, którą instaluje Vercel dla funkcji serverless
+# (api/index.py) — trzymamy ją szczupłą, bez reportlab/pytest (patrz requirements-dev.txt).
 pandas==3.0.3
 pdfplumber==0.11.10
-openpyxl==3.1.5
 RapidFuzz==3.14.5
-pydantic==2.13.4
-typer==0.26.8
-rich==15.0.0
 XlsxWriter==3.2.9
 PyYAML==6.0.1
-# tylko do generowania syntetycznych fikstur / testów
-reportlab==5.0.0
-pytest==9.1.1
-# opcjonalnie: upsert do panelu CFO (--load-supabase)
-# supabase>=2.0
+typer==0.26.8
+rich==15.0.0
+flask==3.1.3

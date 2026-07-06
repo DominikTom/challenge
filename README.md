@@ -60,6 +60,37 @@ python -m transport_audit run --erp $F/Eksport.csv \
   --period 2026-02 --out ./out
 ```
 
+## Aplikacja web (deploy na Vercel)
+
+Oprócz CLI dołączona jest lekka warstwa web (Flask) deployowalna na Vercel jako
+funkcja serverless — wgrywasz pliki w przeglądarce, dostajesz uzgodnienie,
+flagi audytowe i pliki do pobrania.
+
+```
+api/index.py            # wejście serverless (WSGI `app`) dla @vercel/python
+vercel.json             # rewrite wszystkich ścieżek na funkcję Flask
+transport_audit/web/    # app.py (Flask), service.py (pipeline->JSON), ui.py (frontend)
+transport_audit/web/sample/  # wbudowane dane demo (przycisk „Pokaż na danych demo")
+```
+
+Endpointy:
+- `GET /` — interfejs (upload ERP + zestawień + faktur, wybór okresu),
+- `POST /api/run` — uruchamia audyt na wgranych plikach → JSON + pliki (base64),
+- `POST /api/sample` — audyt na wbudowanych danych demo (golden cases, bez uploadu),
+- `GET /api/health` — health check.
+
+**Deploy:** repo jest podpięte do Vercela — `git push` na gałąź produkcyjną
+uruchamia build. Vercel instaluje `requirements.txt` (szczupły: bez
+reportlab/pytest) i serwuje `api/index.py`. Lokalnie: `vercel dev` albo
+`flask --app transport_audit.web.app run`.
+
+**Ograniczenia serverless (ważne dla realnych danych):**
+- **Limit ciała żądania ~4,5 MB** — duży `Eksport.csv` (~225 tys. wierszy) może
+  się nie zmieścić w uploadzie; użyj wtedy CLI albo pojedynczego okresu.
+- **Timeout 60 s** (Pro) i limit pamięci — dobre do jednego okresu / mniejszych
+  plików. Ciężki, pełny audyt miesięczny lepiej puszczać przez CLI.
+- Przycisk **„Pokaż na danych demo"** działa zawsze (dane wbudowane, bez uploadu).
+
 ## Wyjścia (`--out`)
 
 | Plik | Zawartość |

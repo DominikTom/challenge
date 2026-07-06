@@ -1,0 +1,397 @@
+﻿Numer;Data zamówienia;Przewidywana data;Pozycje zamówienia/Produkt/Nazwa;Pozycje zamówienia/Ilość;Pozycje zamówienia/Opcja;Metoda dostawy;Kod pocztowy;Miasto;Suma;Koszt dostawy;Uwagi;Zapłacone;Status;Tagi;Data realizacji;Kupon rabatowy;Faktura produkcyjna;Faktura materac;Faktura transportowa;Klient/Nazwa;Klient/E-mail;Klient/Telefon;Adres dostawy/Ulica
+Shoper47559-1;2026-02-05;2026-02-05;Łóżko Auro Twin;1;Powierzchnia spania: 90cm x 200cm;SPT Logistics;30-001;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Dominika Bronner;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper46281-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;80-001;Gdańsk;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Jan Kowalski;klient@example.com;600100200;ul. Testowa 1
+;;;Wniesienie zamówienia z usługą montażu i sprzątania;1;;;;;;;;;;;;;;;;;;;
+Shoper46600-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;50-001;Wrocław;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Anna Nowak;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48001-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48002-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48003-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48004-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 4;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48005-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 5;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48006-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 6;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48007-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 7;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48008-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 8;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48009-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 9;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48010-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 10;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48011-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 11;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48012-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;02-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Fail 12;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48013-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-001;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Anulo 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48014-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-001;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Anulo 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48015-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-001;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Anulo 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48020-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;31-001;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Rabat;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48021-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;80-010;Gdańsk;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Objetosc;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48022-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;40-001;Katowice;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Proba;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48100-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48101-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48102-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48103-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 4;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48104-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 5;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48105-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-001;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Klaster 6;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper48120-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;90-002;Łódź;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient Przeplata;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49000-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;20-100;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49001-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;21-101;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49002-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;22-102;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49003-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;23-103;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 4;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49004-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;24-104;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 5;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49005-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;25-105;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 6;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49006-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;26-106;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 7;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49007-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;27-107;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 8;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49008-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;28-108;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 9;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49009-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;29-109;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 10;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49010-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;30-110;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 11;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49011-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;31-111;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 12;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49012-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;32-112;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 13;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49013-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;33-113;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 14;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49014-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;34-114;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 15;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49015-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;35-115;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 16;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49016-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;36-116;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 17;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49017-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;37-117;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 18;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49018-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;38-118;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 19;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49019-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;39-119;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 20;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49020-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;40-120;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 21;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49021-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;41-121;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 22;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49022-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;42-122;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 23;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49023-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;43-123;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 24;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49024-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;44-124;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 25;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49025-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;45-125;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 26;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49026-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;46-126;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 27;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49027-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;47-127;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 28;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49028-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;48-128;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 29;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49029-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;49-129;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 30;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49030-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;50-130;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 31;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49031-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;51-131;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 32;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49032-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;52-132;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 33;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49033-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;53-133;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 34;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49034-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;54-134;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 35;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49035-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;55-135;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 36;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49036-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;56-136;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 37;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49037-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;57-137;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 38;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49038-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;58-138;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 39;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49039-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;59-139;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 40;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49040-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;60-140;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 41;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49041-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-141;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 42;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49042-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;62-142;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 43;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49043-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;63-143;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 44;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49044-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;64-144;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 45;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49045-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;65-145;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 46;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49046-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;66-146;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 47;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49047-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;67-147;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 48;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49048-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;68-148;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 49;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49049-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;69-149;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 50;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49050-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;70-150;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 51;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49051-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;71-151;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 52;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49052-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;72-152;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 53;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49053-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;73-153;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 54;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49054-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;74-154;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 55;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49055-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;75-155;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 56;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49056-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;76-156;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 57;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49057-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;77-157;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 58;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49058-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;78-158;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 59;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49059-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;79-159;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 60;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49060-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;20-160;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 61;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49061-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;21-161;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 62;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49062-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;22-162;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 63;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49063-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;23-163;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 64;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49064-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;24-164;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 65;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49065-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;25-165;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 66;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49066-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;26-166;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 67;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49067-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;27-167;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 68;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49068-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;28-168;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 69;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49069-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;29-169;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 70;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49070-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;30-170;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 71;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49071-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;31-171;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 72;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49072-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;32-172;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 73;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49073-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;33-173;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 74;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49074-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;34-174;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 75;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49075-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;35-175;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 76;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49076-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;36-176;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 77;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49077-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;37-177;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 78;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49078-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;38-178;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 79;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49079-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;39-179;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 80;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49080-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;40-180;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 81;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49081-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;41-181;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 82;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49082-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;42-182;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 83;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49083-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;43-183;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 84;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49084-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;44-184;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 85;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49085-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;45-185;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 86;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49086-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;46-186;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 87;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49087-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;47-187;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 88;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49088-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;48-188;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 89;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49089-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;49-189;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;307/02/2026/TR ZADBANO;Klient Zad 90;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47560-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;60-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47561-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47562-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;62-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47563-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;63-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 4;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47564-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;64-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 5;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47565-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;65-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 6;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47566-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;66-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 7;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47567-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;67-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 8;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47568-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;68-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 9;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper47569-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;69-100;Poznań;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Klient DM 10;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper46046-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;70-001;Szczecin;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Piotr Zieliński;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper43503-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;00-001;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Maria Wiśniewska;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper43183-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;31-500;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Tomasz Lewandowski;klient@example.com;600100200;ul. Testowa 1
+;;;Wniesienie zamówienia;1;;;;;;;;;;;;;;;;;;;
+Shoper43900-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;20-001;Lublin;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Ewa Dąbrowska;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper12345-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;00-950;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Kolizja Shoper;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shopify12345-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;80-950;Gdańsk;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;;Kolizja Shopify;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+ZAM01847;2026-02-10;2026-02-10;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;44-100;Gliwice;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-10;;FP/1/2026;;;Grzegorz Bąk;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shopify77777-1;2026-02-12;2026-02-12;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;43-300;Bielsko-Biała;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-12;;FP/1/2026;;;Halina Górska;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45000-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;10-200;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 1;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45001-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;11-201;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 2;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45002-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;12-202;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 3;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45003-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;13-203;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 4;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45004-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;14-204;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 5;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45005-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;15-205;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 6;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45006-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;16-206;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 7;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45007-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;17-207;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 8;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45008-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;18-208;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 9;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45009-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;19-209;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 10;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45010-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;20-210;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 11;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45011-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;21-211;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 12;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45012-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;22-212;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 13;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45013-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;23-213;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 14;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45014-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;24-214;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 15;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45015-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;25-215;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 16;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45016-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;26-216;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 17;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45017-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;27-217;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 18;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45018-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;28-218;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 19;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45019-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;29-219;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 20;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45020-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;30-220;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 21;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45021-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;31-221;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 22;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45022-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;32-222;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 23;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45023-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;33-223;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 24;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45024-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;34-224;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 25;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45025-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;35-225;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 26;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45026-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;36-226;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 27;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45027-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;37-227;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 28;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45028-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;38-228;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 29;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45029-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;39-229;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 30;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45030-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;40-230;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 31;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45031-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;41-231;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 32;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45032-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;42-232;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 33;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45033-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;43-233;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 34;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45034-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;44-234;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 35;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45035-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;45-235;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 36;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45036-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;46-236;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 37;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45037-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;47-237;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 38;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45038-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;48-238;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 39;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45039-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;49-239;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 40;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45040-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;50-240;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 41;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45041-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;51-241;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 42;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45042-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;52-242;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 43;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45043-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;53-243;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 44;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45044-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;54-244;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 45;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45045-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;55-245;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 46;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45046-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;56-246;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 47;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45047-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;57-247;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 48;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45048-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;58-248;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 49;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45049-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;59-249;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 50;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45050-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;60-250;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 51;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45051-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;61-251;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 52;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45052-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;62-252;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 53;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45053-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;63-253;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 54;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45054-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;64-254;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 55;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45055-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;65-255;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 56;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45056-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;66-256;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 57;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45057-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;67-257;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 58;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45058-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;68-258;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 59;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper45059-1;2026-02-05;2026-02-05;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;69-259;Kraków;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-05;;FP/1/2026;;FS/38/02/2026 SPT;Klient SPT 60;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;
+Shoper49999-1;2026-02-15;2026-02-15;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;35-001;Rzeszów;2 499,00;149,00;;2 499,00;zrealizowane;;2026-02-15;;FP/1/2026;;;Klient Unbilled;klient@example.com;600100200;ul. Testowa 1
+;;;Wniesienie zamówienia;1;;;;;;;;;;;;;;;;;;;
+Shoper40000-1;2026-01-20;2026-01-20;Łóżko kontynentalne Lea;1;Powierzchnia spania: 160cm x 200cm;SPT Logistics;00-002;Warszawa;2 499,00;149,00;;2 499,00;zrealizowane;;2026-01-20;;FP/1/2026;;;Klient Styczen;klient@example.com;600100200;ul. Testowa 1
+;;;Wysyłka;1;;;;;;;;;;;;;;;;;;;

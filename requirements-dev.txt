@@ -1,0 +1,6 @@
+# Zależności deweloperskie: generowanie syntetycznych fikstur + testy.
+# NIE są potrzebne w bundlu serverless Vercela.
+-r requirements.txt
+openpyxl==3.1.5
+reportlab==5.0.0
+pytest==9.1.1
