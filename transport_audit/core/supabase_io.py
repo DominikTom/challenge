@@ -64,7 +64,8 @@ class SupabaseClient:
         return h
 
     def _request(self, method: str, path: str, *, body=None,
-                 headers: dict | None = None, params: dict | None = None):
+                 headers: dict | None = None, params: dict | None = None,
+                 want_headers: bool = False):
         url = f"{self.url}/rest/v1/{path}"
         if params:
             url += "?" + urllib.parse.urlencode(params)
@@ -74,7 +75,8 @@ class SupabaseClient:
         try:
             with urllib.request.urlopen(req, timeout=50) as resp:
                 raw = resp.read().decode("utf-8")
-                return json.loads(raw) if raw.strip() else []
+                parsed = json.loads(raw) if raw.strip() else []
+                return (parsed, dict(resp.headers)) if want_headers else parsed
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:400]
             raise SupabaseError(f"HTTP {e.code} {e.reason} na {path}: {detail}")
@@ -84,19 +86,41 @@ class SupabaseClient:
     def rpc(self, fn: str, payload: dict):
         return self._request("POST", f"rpc/{fn}", body=payload)
 
-    def upsert(self, table: str, rows: list[dict], on_conflict: str):
-        if not rows:
-            return []
-        return self._request(
-            "POST", table, body=rows,
-            headers={"Prefer": "resolution=merge-duplicates,return=minimal"},
-            params={"on_conflict": on_conflict})
+    def rpc_all(self, fn: str, payload: dict, page: int = 1000) -> list[dict]:
+        """Wywołaj RPC z paginacją (odporność na PostgREST db-max-rows)."""
+        out: list[dict] = []
+        offset, total = 0, None
+        while True:
+            data, hdrs = self._request(
+                "POST", f"rpc/{fn}", body=payload,
+                headers={"Prefer": "count=exact"},
+                params={"limit": page, "offset": offset}, want_headers=True)
+            out.extend(data)
+            got = len(data)
+            offset += got
+            cr = hdrs.get("Content-Range") or hdrs.get("content-range")
+            if total is None and cr and "/" in cr:
+                tail = cr.rsplit("/", 1)[-1]
+                total = int(tail) if tail.isdigit() else None
+            if got == 0:
+                break
+            if total is not None and offset >= total:
+                break
+            if total is None and got < page:
+                break
+        return out
 
-    def insert(self, table: str, rows: list[dict]):
-        if not rows:
-            return []
-        return self._request("POST", table, body=rows,
-                             headers={"Prefer": "return=minimal"})
+    def upsert(self, table: str, rows: list[dict], on_conflict: str, batch: int = 500):
+        for i in range(0, len(rows), batch):
+            self._request(
+                "POST", table, body=rows[i:i + batch],
+                headers={"Prefer": "resolution=merge-duplicates,return=minimal"},
+                params={"on_conflict": on_conflict})
+
+    def insert(self, table: str, rows: list[dict], batch: int = 500):
+        for i in range(0, len(rows), batch):
+            self._request("POST", table, body=rows[i:i + batch],
+                         headers={"Prefer": "return=minimal"})
 
 
 # --------------------------------------------------------------------------- #
@@ -181,7 +205,7 @@ def load_erp_from_supabase(
     client = client or SupabaseClient()
     start, end = period_bounds(period)
     unique_cores = sorted({c for c in cores if c})
-    rows = client.rpc(RPC_ERP, {
+    rows = client.rpc_all(RPC_ERP, {
         "p_cores": unique_cores, "p_start": start, "p_end": end,
     })
     orders = [_erp_order_from_row(r, cfg) for r in rows]
