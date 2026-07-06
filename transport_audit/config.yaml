@@ -1,0 +1,125 @@
+# Konfiguracja audytu kosztów transportu (MyBed / Delta Industries).
+# Wszystkie mapowania i progi z §2/§4/§6 specyfikacji trzymamy tutaj,
+# żeby nowe warianty nazw / nowe progi dało się dodać bez zmian w kodzie.
+
+# --------------------------------------------------------------------------- #
+# Pozycje-usługi w ERP -> poziom usługi (§2.1)
+# Klucze porównujemy po znormalizowanym (lower, bez nadmiarowych spacji) tekście.
+# --------------------------------------------------------------------------- #
+service_items:
+  "Wysyłka": DOOR
+  "Wniesienie zamówienia": CARRY_IN
+  "Wniesienie zamówienia z usługą montażu i sprzątania": CARRY_IN_ASSEMBLY
+  # warianty legacy
+  "Usługa wniesienia i montażu": CARRY_IN_ASSEMBLY
+  "Usługa wniesienia": CARRY_IN
+  "Usługa montażu i sprzątania": CARRY_IN_ASSEMBLY
+  "Wniesienie i montaż": CARRY_IN_ASSEMBLY
+
+# --------------------------------------------------------------------------- #
+# Zadbano `Typ usługi` (komponent opłaty) -> type_code (§2.3)
+# fee_type_map = dopasowanie dokładne; fee_type_patterns = regex (case-insensitive)
+# dla nazw zmiennych (np. "Dostawa w godz. 8-12").
+# --------------------------------------------------------------------------- #
+fee_type_map:
+  "Transport": TRANSPORT
+  "Dopłata paliwowa": FUEL
+  "Opłata drogowa": ROAD
+  "Dopłata sezonowa": SEASONAL
+  "Dopłata za standard dostawy": STANDARD
+  "podjęcie towaru od Nadawcy": PICKUP
+  "podjęcie towaru z magazynu Kontrahenta": PICKUP
+  "Rabat": DISCOUNT
+  "weryfikacja objętości": VOLUME_RECHECK
+  "dodatkowa próba doręczenia": EXTRA_ATTEMPT
+  "Zmiana daty - Vendor": DATE_CHANGE
+  "Zmiana adresu": ADDR_CHANGE
+  "Ciężkie paczki": HEAVY
+  "Dłużyca": OVERSIZE
+  "Podgląd szacunkowych godzin": OTHER
+
+fee_type_patterns:
+  - pattern: "zmiana daty.*klient"        # Płatna/Darmowa zmiana daty - Klient
+    type_code: DATE_CHANGE
+  - pattern: "zmiana daty"
+    type_code: DATE_CHANGE
+  - pattern: "zmiana adresu"
+    type_code: ADDR_CHANGE
+  - pattern: "dostawa w godz"              # Dostawa w godz. ...
+    type_code: OTHER
+  - pattern: "dodatkowa próba"
+    type_code: EXTRA_ATTEMPT
+  - pattern: "podjęcie towaru"
+    type_code: PICKUP
+  - pattern: "paliwow"
+    type_code: FUEL
+  - pattern: "drogow"
+    type_code: ROAD
+  - pattern: "sezonow"
+    type_code: SEASONAL
+  - pattern: "standard"
+    type_code: STANDARD
+  - pattern: "rabat"
+    type_code: DISCOUNT
+  - pattern: "weryfikacja objęt"
+    type_code: VOLUME_RECHECK
+  - pattern: "ciężk"
+    type_code: HEAVY
+  - pattern: "dłużyc"
+    type_code: OVERSIZE
+  - pattern: "transport"
+    type_code: TRANSPORT
+
+# --------------------------------------------------------------------------- #
+# Normalizacja statusów realizacji
+# --------------------------------------------------------------------------- #
+status_map:
+  # Zadbano `Status realizacji`
+  "zrealizowane": DELIVERED
+  "niepowodzenie": FAILED
+  "anulowane": CANCELLED
+  "w realizacji": IN_PROGRESS
+  # SPT `Stan`
+  "odebrane": DELIVERED
+  "nieodebrane": FAILED
+
+# --------------------------------------------------------------------------- #
+# Poziom usługi wyprowadzony z pól zestawień przewoźników
+# --------------------------------------------------------------------------- #
+# Zadbano `Standard dostawy`
+zadbano_standard_map:
+  "dostawa": DOOR
+  "dostawa standard": DOOR
+  "dostawa komfort": CARRY_IN_ASSEMBLY
+
+# SPT `Typ zamówienia`
+spt_order_type_map:
+  "zam. zwykłe": DOOR
+  "zam. z wniesieniem": CARRY_IN
+
+# --------------------------------------------------------------------------- #
+# Nazwy przewoźników w kolumnie `Faktura transportowa` ("<nr fv> <PRZEWOŹNIK>")
+# --------------------------------------------------------------------------- #
+carrier_display:
+  SPT: "SPT"
+  ZADBANO: "ZADBANO"
+  DM_TRANS: "D&M TRANS"
+
+# Aliasy używane do odczytu przewoźnika z historycznych ręcznych wpisów (backtest §9)
+carrier_aliases:
+  SPT: ["SPT"]
+  ZADBANO: ["ZADBANO", "ZADBANO SP", "ZADBANO.PL"]
+  DM_TRANS: ["D&M TRANS", "D&M", "DM TRANS", "DandM", "D I M TRANS"]
+
+# --------------------------------------------------------------------------- #
+# Progi audytu (§6) i uzgodnienia (§4)
+# --------------------------------------------------------------------------- #
+thresholds:
+  reconcile_tolerance: 0.01        # tolerancja uzgodnienia Σ vs netto FV
+  tariff_overpay_multiplier: 1.20  # > mediana × 1.20 -> FLAG above tariff (§6.5)
+  tariff_min_observations: 5       # min. obserwacji w klastrze, by flagować (§6.5)
+  split_volume_tolerance: 0.25     # ±25% zgodności objętości dla split shipment (§6.1)
+  volume_upcharge_tolerance: 0.20  # >20% rozjazdu objętości -> FLAG (§6.7)
+  surcharge_sigma: 3.0             # >3 odchylenia -> surcharge outlier (§6.6)
+  fuzzy_threshold: 90              # rapidfuzz >=90 dla fallbacku po nazwisku (§4.2)
+  fuzzy_date_window_days: 14       # okno ±14 dni dla fallbacku (§4.2)

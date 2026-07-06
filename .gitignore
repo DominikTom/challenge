@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Wyjścia narzędzia
+/out/
+*.log
+
+# Fikstury generowane (odtwarzalne: `python -m transport_audit.tests.fixtures.generate`)
+transport_audit/tests/fixtures/*.pdf
+transport_audit/tests/fixtures/*.xlsx
+transport_audit/tests/fixtures/*.csv
+transport_audit/tests/fixtures/manifest.json
+
+# Realne dane wejściowe (nie commitujemy danych produkcyjnych)
+/data/
+Eksport.csv
+*_specyfikacja.xlsx
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+.pytest_cache/
