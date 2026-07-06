@@ -74,7 +74,7 @@ def build_app() -> Flask:
             return jsonify({"error": f"{type(exc).__name__}: {exc}",
                             "trace": traceback.format_exc()[-1500:]}), 500
 
-    @app.post("/api/sample")
+    @app.route("/api/sample", methods=["GET", "POST"])
     def sample():
         try:
             summary = run_audit(
