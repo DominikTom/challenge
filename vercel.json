@@ -5,7 +5,6 @@
   ],
   "functions": {
     "api/index.py": {
-      "memory": 1769,
       "maxDuration": 60
     }
   }

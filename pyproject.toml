@@ -10,17 +10,18 @@ requires-python = ">=3.11"
 dependencies = [
     "pandas>=2.2",
     "pdfplumber>=0.11",
-    "openpyxl>=3.1",
     "RapidFuzz>=3.0",
-    "pydantic>=2.0",
     "typer>=0.12",
     "rich>=13.0",
     "XlsxWriter>=3.2",
     "PyYAML>=6.0",
+    "flask>=3.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "reportlab>=4.0"]
+# Vercel instaluje TYLKO [project.dependencies] z pyproject.toml (uv) —
+# generowanie fikstur (reportlab/openpyxl) i testy trzymamy poza bundlem.
+dev = ["pytest>=8.0", "reportlab>=4.0", "openpyxl>=3.1"]
 supabase = ["supabase>=2.0"]
 
 [project.scripts]
