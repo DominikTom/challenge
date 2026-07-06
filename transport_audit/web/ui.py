@@ -75,8 +75,18 @@ INDEX_HTML = r"""<!doctype html>
     <!-- LEWY PANEL: wejście -->
     <div class="panel">
       <h2>Dane wejściowe</h2>
-      <label>Eksport ERP (CSV)</label>
-      <input type="file" id="erp" accept=".csv">
+      <label>Źródło ERP</label>
+      <div class="row" style="gap:18px;margin-top:2px">
+        <label style="margin:0;color:var(--tx)"><input type="radio" name="erpsrc" value="file" checked onchange="onSrc()"> Plik CSV</label>
+        <label style="margin:0;color:var(--tx)" id="srcSupaLabel"><input type="radio" name="erpsrc" value="supabase" id="srcSupa" onchange="onSrc()"> Supabase</label>
+      </div>
+      <div id="erpFileWrap">
+        <label>Eksport ERP (CSV)</label>
+        <input type="file" id="erp" accept=".csv">
+      </div>
+      <div id="supaNote" class="muted hidden" style="margin-top:8px">
+        ERP pobierany z Supabase po rdzeniach z zestawień (bez uploadu wielkiego CSV).
+        Wgraj tylko zestawienia + faktury poniżej.</div>
       <label>Okres (YYYY-MM)</label>
       <input type="text" id="period" value="2026-02" placeholder="2026-02">
 
@@ -96,6 +106,9 @@ INDEX_HTML = r"""<!doctype html>
         <label>Faktura</label><input type="file" id="dm_inv" accept=".pdf">
       </div>
 
+      <label class="hidden" id="saveSupaWrap" style="margin-top:12px;color:var(--tx)">
+        <input type="checkbox" id="saveSupa"> Zapisz wyniki do Supabase
+        <span class="muted">(fact_delivery_costs + reconciliation_log)</span></label>
       <div class="row">
         <button class="btn" id="runBtn" onclick="runUpload()">Uruchom audyt</button>
         <button class="btn ghost" id="demoBtn" onclick="runDemo()">Pokaż na danych demo</button>
@@ -124,14 +137,36 @@ function fmt(n){return n==null?'—':Number(n).toLocaleString('pl-PL',{minimumFr
 function esc(s){return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
 const VERCEL_BODY_LIMIT = 4.4*1024*1024;  // ~4,5 MB limit żądania serverless
+let SUPA_OK = false;
+
+(async function initConfig(){
+  try{ const r=await fetch('/api/config'); const c=await r.json(); SUPA_OK=!!c.supabase_configured; }catch(e){}
+  const supaRadio=$('srcSupa'), saveWrap=$('saveSupaWrap'), lbl=$('srcSupaLabel');
+  if(SUPA_OK){ supaRadio.disabled=false; saveWrap.classList.remove('hidden'); }
+  else { supaRadio.disabled=true; lbl.style.opacity=.45;
+    lbl.title='Ustaw SUPABASE_URL i SUPABASE_KEY w zmiennych środowiskowych Vercel'; }
+})();
+
+function erpSource(){ const el=document.querySelector('input[name=erpsrc]:checked'); return el?el.value:'file'; }
+function onSrc(){
+  const supa = erpSource()==='supabase';
+  $('erpFileWrap').classList.toggle('hidden', supa);
+  $('supaNote').classList.toggle('hidden', !supa);
+}
+
 async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
-  const erp=$('erp').files[0];
-  if(!erp){ showErr('Wgraj plik Eksport ERP (CSV) albo użyj „Pokaż na danych demo".'); return; }
+  const src=erpSource();
   const fd=new FormData();
   fd.append('period', $('period').value||'2026-02');
-  fd.append('erp', erp);
-  let total=erp.size, any=false;
+  fd.append('erp_source', src);
+  if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
+  let total=0, any=false;
+  if(src==='file'){
+    const erp=$('erp').files[0];
+    if(!erp){ showErr('Wgraj plik Eksport ERP (CSV), wybierz źródło Supabase, albo użyj „Pokaż na danych demo".'); return; }
+    fd.append('erp', erp); total+=erp.size;
+  }
   const map=[['SPT','spt_spec','spt_inv'],['ZADBANO','zad_spec','zad_inv'],['DM_TRANS','dm_spec','dm_inv']];
   for(const [c,s,i] of map){
     if($(s).files[0]){ fd.append(c+'_spec',$(s).files[0]); total+=$(s).files[0].size; any=true;
@@ -140,8 +175,7 @@ async function runUpload(){
   if(!any){ showErr('Wgraj co najmniej jedno zestawienie przewoźnika.'); return; }
   if(total > VERCEL_BODY_LIMIT){
     showErr('Suma wgranych plików to '+(total/1048576).toFixed(1)+' MB, a limit żądania Vercela to '
-      +'~4,5 MB. Najczęściej to duży Eksport.csv — zmniejsz go do jednego okresu, użyj CLI, '
-      +'albo skorzystaj z trybu „import ERP z Supabase" (bez uploadu).');
+      +'~4,5 MB. Zmniejsz Eksport.csv, użyj CLI, albo przełącz źródło ERP na „Supabase" (bez uploadu CSV).');
     return;
   }
   await run('/api/run', fd);
@@ -227,6 +261,11 @@ function render(d){
       <td class="num">${fmt(r.amount)}</td><td class="num">${fmt(r.expected)}</td><td>${esc(r.message)}</td></tr>`);
 
   const bt=d.backtest||{};
+  const sw=d.supabase_write;
+  const swMsg = !sw ? '' : (sw.status==='upserted'
+      ? `<p style="margin-top:8px"><span class="ok">✓ Zapisano do Supabase:</span> ${sw.fact_rows} rekordów fact_delivery_costs, ${sw.recon_rows} reconciliation_log</p>`
+      : `<p style="margin-top:8px"><span class="bad">Supabase (${esc(sw.status)}):</span> ${esc(sw.error||sw.reason||'')}</p>`);
+  const srcMsg = d.erp_source==='supabase' ? ' · źródło ERP: Supabase' : '';
   $('result').innerHTML = `
     <div class="kpis">
       <div class="kpi"><div class="v ${d.reconcile_ok?'ok':'bad'}">${d.reconcile_ok?'✓ zgodne':'✗ rozjazd'}</div><div class="l">Uzgodnienie z FV</div></div>
@@ -239,7 +278,7 @@ function render(d){
       <h2>Uzgodnienie z fakturami zbiorczymi (§9)</h2>${rec}
       <p class="muted" style="margin-top:8px">Dopasowane linie: ${d.counts.matched} / ${d.counts.deliveries} ·
         osierocone: ${d.counts.orphans} · nieobciążone: ${d.counts.unbilled} ·
-        zamówienia ERP: ${d.counts.erp_orders}</p>
+        zamówienia ERP: ${d.counts.erp_orders}${srcMsg}</p>
     </div>
 
     <div class="panel sec">
@@ -267,6 +306,7 @@ function render(d){
       </div>
       <p class="muted" style="margin-top:10px">audit_report.xlsx zawiera 16 zakładek (m.in. Cross_carrier,
         Duble, Przeplaty, Nieudane_obciazone, Walidacja_vs_reczne, Podsumowanie_per_przewoznik).</p>
+      ${swMsg}
     </div>`;
   $('result').classList.remove('hidden');
 }

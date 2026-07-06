@@ -85,3 +85,28 @@ def test_run_requires_carrier(client):
     data = {"period": "2026-02", "erp": (open(SAMPLE / "erp_demo.csv", "rb"), "erp.csv")}
     r = client.post("/api/run", data=data, content_type="multipart/form-data")
     assert r.status_code == 400
+
+
+def test_config_endpoint(client, monkeypatch):
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    monkeypatch.delenv("SUPABASE_KEY", raising=False)
+    assert client.get("/api/config").get_json() == {"supabase_configured": False}
+
+
+def test_supabase_source_requires_creds(client, monkeypatch):
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    monkeypatch.delenv("SUPABASE_KEY", raising=False)
+    data = {"period": "2026-02", "erp_source": "supabase",
+            "SPT_spec": (open(SAMPLE / "spt_demo.pdf", "rb"), "spt.pdf")}
+    r = client.post("/api/run", data=data, content_type="multipart/form-data")
+    assert r.status_code == 400
+    assert "SUPABASE" in r.get_json()["error"]
+
+
+def test_erp_source_reported_in_summary(client):
+    data = {"period": "2026-02", "erp_source": "file",
+            "erp": (open(SAMPLE / "erp_demo.csv", "rb"), "erp.csv"),
+            "SPT_spec": (open(SAMPLE / "spt_demo.pdf", "rb"), "spt.pdf"),
+            "SPT_invoice": (open(SAMPLE / "invoice_spt.pdf", "rb"), "i.pdf")}
+    d = client.post("/api/run", data=data, content_type="multipart/form-data").get_json()
+    assert d["erp_source"] == "file"

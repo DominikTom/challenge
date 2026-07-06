@@ -64,13 +64,19 @@ def _stated_total(carrier: Carrier, adapter, spec_path: str) -> float | None:
 
 
 def run_pipeline(
-    erp_path: str | Path,
+    erp_path: str | Path | None,
     carrier_inputs: list[CarrierInput],
     period: str,
     cfg: Config | None = None,
+    erp_source: str = "file",
 ) -> PipelineResult:
+    """Uruchom pipeline. ``erp_source``: 'file' (Eksport.csv) lub 'supabase'.
+
+    Dla 'supabase' najpierw parsujemy zestawienia przewoźników (żeby poznać
+    rdzenie zamówień), a potem pobieramy z Supabase tylko te zamówienia +
+    okno okresu (do nieobciążonych) — bez wgrywania całego Eksport.csv.
+    """
     cfg = cfg or load_config()
-    erp = load_erp(erp_path, cfg)
 
     all_deliveries: list[Delivery] = []
     invoices: list[Invoice] = []
@@ -99,6 +105,16 @@ def run_pipeline(
         stated = _stated_total(ci.carrier, adapter, ci.spec_path)
         recon_results.append(
             reconcile_run(deliveries, invoice, stated_total=stated, cfg=cfg))
+
+    # --- źródło ERP: plik CSV albo Supabase (po rdzeniach z zestawień) -------
+    if erp_source == "supabase":
+        from .supabase_io import load_erp_from_supabase
+        cores = [d.order_core for d in all_deliveries if d.order_core]
+        erp = load_erp_from_supabase(cores, period, cfg)
+    else:
+        if erp_path is None:
+            raise ValueError("erp_source='file' wymaga podania ścieżki do Eksport.csv")
+        erp = load_erp(erp_path, cfg)
 
     outcome = Matcher(erp, cfg).run(all_deliveries, period)
     tariff = TariffModel.learn(outcome.matches, cfg)

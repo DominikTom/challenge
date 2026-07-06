@@ -132,10 +132,16 @@ def _b64_file(path: Path) -> dict:
     }
 
 
-def run_audit(erp_path: str, carrier_inputs: list[CarrierInput], period: str) -> dict:
-    """Uruchom pełny pipeline i zwróć podsumowanie + pliki (base64)."""
-    result = run_pipeline(erp_path, carrier_inputs, period)
+def run_audit(erp_path: str | None, carrier_inputs: list[CarrierInput], period: str,
+              erp_source: str = "file", save_supabase: bool = False) -> dict:
+    """Uruchom pełny pipeline i zwróć podsumowanie + pliki (base64).
+
+    ``erp_source``: 'file' albo 'supabase'. ``save_supabase``: upsert wyników
+    do fact_delivery_costs + reconciliation_log.
+    """
+    result = run_pipeline(erp_path, carrier_inputs, period, erp_source=erp_source)
     summary = build_summary(result)
+    summary["erp_source"] = erp_source
 
     out_dir = Path(tempfile.mkdtemp(prefix="ta_out_"))
     paths = generate_reports(result, out_dir)
@@ -144,4 +150,12 @@ def run_audit(erp_path: str, carrier_inputs: list[CarrierInput], period: str) ->
         "enriched_orders": _b64_file(Path(paths["enriched_orders"])),
         "reference_tariff": _b64_file(Path(paths["reference_tariff"])),
     }
+
+    if save_supabase:
+        from ..core.supabase_io import write_results
+        try:
+            summary["supabase_write"] = write_results(result)
+        except Exception as exc:  # noqa: BLE001
+            summary["supabase_write"] = {"status": "error",
+                                         "error": f"{type(exc).__name__}: {exc}"}
     return summary

@@ -100,6 +100,46 @@ reportlab/pytest) i serwuje `api/index.py`. Lokalnie: `vercel dev` albo
 | `reference_tariff.json` | Nauczony cennik: mediana `TRANSPORT` per klaster `carrier × service_level × volume_bucket × postcode2`. |
 | `backtest.json` | Zgodność auto-przypisania przewoźnika z historycznym wpisem ręcznym (precision/recall). |
 
+## Integracja z Supabase (import ERP + eksport wyników)
+
+Zamiast wgrywać wielki `Eksport.csv`, można czytać ERP wprost z bazy
+(panel.mybed.pl) i zapisywać wyniki audytu z powrotem.
+
+**Import ERP** — `core/supabase_io.py` czyta zamówienia z `fact_orders` +
+`fact_order_items` przez RPC `audit_erp(p_cores, p_start, p_end)`: pobiera
+zamówienia po **rdzeniach z zestawień przewoźników** (obsługuje opóźnienie
+fakturowania — zamówienie z lutego bywa rozliczone w kwietniu) oraz w oknie
+okresu (do wykrycia nieobciążonych). Poziom usługi wyprowadzany z `item_type`
+(`shipping`→DOOR, `service`→wniesienie wg nazwy pozycji).
+
+**Eksport wyników** — upsert do `fact_delivery_costs`
+(klucz `order_core + period + carrier`: realny koszt, rozbicie `fee_breakdown`
+jsonb, `audit_flags`, kwota do odzyskania) + dopisanie uzgodnień Σ vs netto FV
+do `reconciliation_log`. Tabela zamówień (`fact_orders`) nie jest ruszana.
+
+Obiekty w bazie tworzy migracja `transport_audit_fact_costs_and_rpc`
+(tabela `fact_delivery_costs` + funkcja `audit_erp`).
+
+**Konfiguracja (env, także w Vercel → Settings → Environment Variables):**
+```
+SUPABASE_URL=https://<ref>.supabase.co
+SUPABASE_KEY=<service_role albo publishable key>
+```
+Gdy zmienne są ustawione, w UI odblokowuje się źródło „Supabase" i opcja
+„Zapisz wyniki do Supabase"; CLI: `--erp-source supabase` oraz `--load-supabase`.
+
+```bash
+# CLI: ERP z Supabase, zapis wyników do bazy
+python -m transport_audit run \
+  --carrier ZADBANO:invoice=307.pdf,spec=307_spec.xlsx \
+  --period 2026-02 --erp-source supabase --load-supabase --out ./out
+```
+
+> ⚠️ **Bezpieczeństwo:** w projekcie 24 tabele (m.in. `fact_orders`,
+> `raw_erp_orders`) mają **wyłączone RLS** — ktokolwiek z anon-key może czytać
+> i modyfikować wszystkie wiersze. Rekomendacja: włączyć RLS + polityki i używać
+> `service_role` po stronie backendu. Tool tego nie zmienia automatycznie.
+
 ## Architektura
 
 ```

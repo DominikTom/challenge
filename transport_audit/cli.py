@@ -69,22 +69,26 @@ def parse_carrier_spec(spec: str) -> CarrierInput:
 
 @app.command()
 def run(
-    erp: Path = typer.Option(..., "--erp", help="Ścieżka do Eksport.csv (ERP)."),
     carrier: list[str] = typer.Option(
         ..., "--carrier", help="CARRIER:invoice=...,spec=... (można wiele razy)."),
     period: str = typer.Option(..., "--period", help="Okres 'YYYY-MM'."),
+    erp: Path = typer.Option(None, "--erp", help="Ścieżka do Eksport.csv (dla --erp-source file)."),
+    erp_source: str = typer.Option(
+        "file", "--erp-source", help="Źródło ERP: 'file' (Eksport.csv) lub 'supabase'."),
     out: Path = typer.Option(Path("./out"), "--out", help="Katalog wyjściowy."),
     config: Path = typer.Option(None, "--config", help="Ścieżka do config.yaml."),
     load_supabase: bool = typer.Option(
-        False, "--load-supabase", help="Upsert faktów do Supabase (fallback: JSONL)."),
+        False, "--load-supabase", help="Zapisz wyniki do Supabase (fallback: JSONL)."),
 ) -> None:
     """Uruchom pełny pipeline: atrybucja + audyt + uzgodnienie + raporty."""
     cfg = load_config(str(config)) if config else load_config()
     carrier_inputs = [parse_carrier_spec(c) for c in carrier]
+    if erp_source == "file" and erp is None:
+        raise typer.BadParameter("--erp-source file wymaga --erp <Eksport.csv>")
 
     console.print(f"[bold]Audyt transportu[/bold] — okres {period}, "
-                  f"{len(carrier_inputs)} przewoźnik(ów)")
-    result = run_pipeline(erp, carrier_inputs, period, cfg)
+                  f"{len(carrier_inputs)} przewoźnik(ów), źródło ERP: {erp_source}")
+    result = run_pipeline(erp, carrier_inputs, period, cfg, erp_source=erp_source)
 
     _print_reconciliation(result)
     _print_audit_summary(result)
