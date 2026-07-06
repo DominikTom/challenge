@@ -123,6 +123,7 @@ const $ = id => document.getElementById(id);
 function fmt(n){return n==null?'—':Number(n).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function esc(s){return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
+const VERCEL_BODY_LIMIT = 4.4*1024*1024;  // ~4,5 MB limit żądania serverless
 async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
   const erp=$('erp').files[0];
@@ -130,13 +131,19 @@ async function runUpload(){
   const fd=new FormData();
   fd.append('period', $('period').value||'2026-02');
   fd.append('erp', erp);
+  let total=erp.size, any=false;
   const map=[['SPT','spt_spec','spt_inv'],['ZADBANO','zad_spec','zad_inv'],['DM_TRANS','dm_spec','dm_inv']];
-  let any=false;
   for(const [c,s,i] of map){
-    if($(s).files[0]){ fd.append(c+'_spec',$(s).files[0]); any=true;
-      if($(i).files[0]) fd.append(c+'_invoice',$(i).files[0]); }
+    if($(s).files[0]){ fd.append(c+'_spec',$(s).files[0]); total+=$(s).files[0].size; any=true;
+      if($(i).files[0]){ fd.append(c+'_invoice',$(i).files[0]); total+=$(i).files[0].size; } }
   }
   if(!any){ showErr('Wgraj co najmniej jedno zestawienie przewoźnika.'); return; }
+  if(total > VERCEL_BODY_LIMIT){
+    showErr('Suma wgranych plików to '+(total/1048576).toFixed(1)+' MB, a limit żądania Vercela to '
+      +'~4,5 MB. Najczęściej to duży Eksport.csv — zmniejsz go do jednego okresu, użyj CLI, '
+      +'albo skorzystaj z trybu „import ERP z Supabase" (bez uploadu).');
+    return;
+  }
   await run('/api/run', fd);
 }
 
@@ -145,6 +152,17 @@ async function run(url, body){
   try{
     const opt = body ? {method:'POST', body} : {method:'POST'};
     const r = await fetch(url, opt);
+    const ct = r.headers.get('content-type')||'';
+    if(!ct.includes('json')){
+      const txt=(await r.text()).slice(0,300);
+      if(r.status===413 || /too large|entity too large/i.test(txt)){
+        showErr('Pliki przekraczają limit żądania Vercela (~4,5 MB) — zwykle duży Eksport.csv. '
+          +'Zmniejsz go do jednego okresu, użyj CLI, albo trybu „import ERP z Supabase".');
+      } else {
+        showErr('Serwer zwrócił nie-JSON ('+r.status+'): '+txt);
+      }
+      return;
+    }
     const data = await r.json();
     if(!r.ok || data.error){ showErr(data.error||('Błąd '+r.status)); return; }
     render(data);
