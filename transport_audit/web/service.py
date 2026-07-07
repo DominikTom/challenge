@@ -132,14 +132,28 @@ def _b64_file(path: Path) -> dict:
     }
 
 
+def parse_batch(carrier_inputs: list[CarrierInput], period: str = "") -> dict:
+    """Sparsuj jedną partię zestawień/faktur -> mały słownik do zebrania w kliencie.
+
+    Pozwala wgrywać duże dane porcjami (limit żądania Vercela ~4,5 MB): każda
+    porcja jest parsowana osobno, a wyniki (drobne) łączymy i audytujemy razem.
+    """
+    from ..core.pipeline import parse_carrier_batch
+    return parse_carrier_batch(carrier_inputs, period)
+
+
 def run_audit(erp_path: str | None, carrier_inputs: list[CarrierInput], period: str,
-              erp_source: str = "file", save_supabase: bool = False) -> dict:
+              erp_source: str = "file", save_supabase: bool = False,
+              parsed_bundle: dict | None = None) -> dict:
     """Uruchom pełny pipeline i zwróć podsumowanie + pliki (base64).
 
     ``erp_source``: 'file' albo 'supabase'. ``save_supabase``: upsert wyników
-    do fact_delivery_costs + reconciliation_log.
+    do fact_delivery_costs + reconciliation_log. ``parsed_bundle`` (opcjonalnie):
+    złożone, sparsowane zestawienia/faktury z wielu porcji — wtedy pomijamy
+    parsowanie plików przewoźników i liczymy audyt na pełnym okresie.
     """
-    result = run_pipeline(erp_path, carrier_inputs, period, erp_source=erp_source)
+    result = run_pipeline(erp_path, carrier_inputs, period, erp_source=erp_source,
+                          parsed=parsed_bundle)
     summary = build_summary(result)
     summary["erp_source"] = erp_source
 

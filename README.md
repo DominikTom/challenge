@@ -81,9 +81,20 @@ transport_audit/web/sample/  # wbudowane dane demo (przycisk „Pokaż na danych
 
 Endpointy:
 - `GET /` — interfejs (upload ERP + zestawień + faktur, wybór okresu),
-- `POST /api/run` — uruchamia audyt na wgranych plikach → JSON + pliki (base64),
+- `POST /api/parse` — parsuje JEDNĄ porcję zestawień/faktur → mały JSON (do
+  zbierania w kliencie); pozwala wgrywać duże dane partiami pod limit ~4,5 MB,
+- `POST /api/run` — audyt na wgranych plikach albo na złożonym pakiecie `parsed`
+  (zebrane porcje) → JSON + pliki (base64),
 - `POST /api/sample` — audyt na wbudowanych danych demo (golden cases, bez uploadu),
 - `GET /api/health` — health check.
+
+**Dodawanie plików partiami (duże dane).** Zestawienia i faktury można dokładać
+w dowolnej kolejności (przyciski „➕ Dodaj pliki"). Przy „Uruchom audyt" front
+dzieli je na porcje mieszczące się w limicie żądania, parsuje każdą przez
+`/api/parse`, zbiera drobne wyniki i liczy audyt na **całym okresie łącznie**
+(`/api/run` z polem `parsed`). Kolejny „Uruchom audyt" przelicza od nowa cały
+zebrany zestaw (nie dubluje). Pojedynczy plik > ~4,5 MB trzeba przepuścić przez
+CLI. Dla dużego `Eksport.csv` wybierz źródło ERP „Supabase" (bez uploadu CSV).
 
 **Deploy:** repo jest podpięte do Vercela — `git push` na gałąź produkcyjną
 uruchamia build. Vercel instaluje `requirements.txt` (szczupły: bez

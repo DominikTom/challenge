@@ -82,6 +82,55 @@ def test_upload_multiple_specs_and_invoices_pool(client):
     assert spt["within_tolerance"] is True
 
 
+def test_parse_then_run_in_batches(client):
+    """Duże dane porcjami: /api/parse per porcja -> scal w kliencie -> /api/run 'parsed'.
+
+    Odwzorowuje przepływ web dla plików przekraczających limit żądania: SPT w
+    jednej porcji, Zadbano+D&M w drugiej, audyt liczony na złożonym okresie.
+    """
+    import json
+
+    b1 = client.post("/api/parse", data={
+        "SPT_spec": (open(SAMPLE / "spt_demo.pdf", "rb"), "spt.pdf"),
+        "SPT_invoice": (open(SAMPLE / "invoice_spt.pdf", "rb"), "i.pdf"),
+    }, content_type="multipart/form-data").get_json()
+    b2 = client.post("/api/parse", data={
+        "ZADBANO_spec": (open(SAMPLE / "zadbano_demo.xlsx", "rb"), "z.xlsx"),
+        "ZADBANO_invoice": (open(SAMPLE / "invoice_zadbano.pdf", "rb"), "iz.pdf"),
+        "DM_TRANS_spec": (open(SAMPLE / "dm_demo.pdf", "rb"), "dm.pdf"),
+        "DM_TRANS_invoice": (open(SAMPLE / "invoice_dm.pdf", "rb"), "idm.pdf"),
+    }, content_type="multipart/form-data").get_json()
+    assert set(b1["carriers"]) == {"SPT"} and set(b2["carriers"]) == {"ZADBANO", "DM_TRANS"}
+
+    merged = {"carriers": {}, "zadbano_summary": {}}
+    for b in (b1, b2):
+        for c, blk in b["carriers"].items():
+            m = merged["carriers"].setdefault(
+                c, {"deliveries": [], "invoices": [], "stated_total": None})
+            m["deliveries"] += blk["deliveries"]
+            m["invoices"] += blk["invoices"]
+            if blk["stated_total"] is not None:
+                m["stated_total"] = (m["stated_total"] or 0.0) + blk["stated_total"]
+
+    r = client.post("/api/run", data={
+        "period": "2026-02", "parsed": json.dumps(merged),
+        "erp": (open(SAMPLE / "erp_demo.csv", "rb"), "erp.csv"),
+    }, content_type="multipart/form-data")
+    d = r.get_json()
+    assert r.status_code == 200
+    assert d["reconcile_ok"] is True
+    by = {x["carrier"]: x for x in d["reconciliation"]}
+    assert by["ZADBANO"]["actual_sum"] == pytest.approx(98172.50, abs=0.01)
+    assert any(f["order_core"] == "47559" for f in d["findings"]["cross_carrier"])
+    assert set(d["files"]) == {"audit_report", "enriched_orders", "reference_tariff"}
+
+
+def test_parse_requires_files(client):
+    r = client.post("/api/parse", data={"period": "2026-02"},
+                    content_type="multipart/form-data")
+    assert r.status_code == 400
+
+
 def test_upload_run_without_invoice_still_computes(client):
     # bez faktury: audyt liczy koszty, ale nie ma czego uzgadniać (expected_net=None)
     data = {

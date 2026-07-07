@@ -2,6 +2,7 @@
 
 import json
 
+import pytest
 from openpyxl import load_workbook
 
 from transport_audit.report import generate_reports, build_enriched_rows
@@ -127,6 +128,54 @@ def test_carrier_input_all_specs_backcompat():
                          invoice_paths=["i.pdf", "j.pdf"])
     assert multi.all_specs() == ["a.pdf", "b.pdf"]
     assert multi.all_invoices() == ["i.pdf", "j.pdf"]
+
+
+def test_parsed_batches_match_file_pipeline(fixtures_dir):
+    """Parsowanie na raty + złożenie == jednorazowy pipeline plikowy (§ web).
+
+    Kluczowa gwarancja: dodawanie plików partiami (w dowolnej kolejności) i
+    liczenie na złożonym okresie daje te same uzgodnienia, dopasowania i flagi.
+    """
+    import json as _json
+
+    from transport_audit.core.models import Carrier
+    from transport_audit.core.pipeline import (
+        CarrierInput, parse_carrier_batch, run_pipeline, _merge_zsummary,
+    )
+    ci = [
+        CarrierInput(Carrier.SPT, str(fixtures_dir / "spt_spec.pdf"),
+                     str(fixtures_dir / "invoice_spt.pdf")),
+        CarrierInput(Carrier.ZADBANO, str(fixtures_dir / "zadbano_spec_broken.xlsx"),
+                     str(fixtures_dir / "invoice_zadbano.pdf")),
+        CarrierInput(Carrier.DM_TRANS, str(fixtures_dir / "dm_settlement.pdf"),
+                     str(fixtures_dir / "invoice_dm.pdf")),
+    ]
+    direct = run_pipeline(fixtures_dir / "Eksport.csv", ci, "2026-02")
+
+    # partie w „losowej" kolejności: D&M, potem SPT+Zadbano
+    batches = [parse_carrier_batch([ci[2]], "2026-02"),
+               parse_carrier_batch([ci[0], ci[1]], "2026-02")]
+    merged = {"carriers": {}, "zadbano_summary": {}}
+    for b in batches:
+        for c, blk in b["carriers"].items():
+            m = merged["carriers"].setdefault(
+                c, {"deliveries": [], "invoices": [], "stated_total": None})
+            m["deliveries"] += blk["deliveries"]
+            m["invoices"] += blk["invoices"]
+            if blk["stated_total"] is not None:
+                m["stated_total"] = (m["stated_total"] or 0.0) + blk["stated_total"]
+        if b.get("zadbano_summary"):
+            merged["zadbano_summary"] = _merge_zsummary(
+                merged["zadbano_summary"], b["zadbano_summary"])
+    merged = _json.loads(_json.dumps(merged))  # przejście przez HTTP (JSON)
+
+    viap = run_pipeline(fixtures_dir / "Eksport.csv", [], "2026-02", parsed=merged)
+
+    assert {r.carrier: r.actual_sum for r in direct.recon_results} \
+        == {r.carrier: r.actual_sum for r in viap.recon_results}
+    assert len(direct.outcome.matches) == len(viap.outcome.matches)
+    assert len(direct.audit.flags) == len(viap.audit.flags)
+    assert viap.recon_by_carrier["ZADBANO"].total_actual == pytest.approx(98172.50, abs=0.01)
 
 
 def test_supabase_fact_rows_keyed(pipeline_result):

@@ -33,6 +33,21 @@ def _save_uploads(files, tmp: Path, prefix: str) -> list[str]:
     return paths
 
 
+def _carrier_inputs_from_request(tmp: Path) -> list[CarrierInput]:
+    """Zbierz CarrierInput z pól multipart (wiele zestawień/faktur per przewoźnik)."""
+    inputs: list[CarrierInput] = []
+    for field, carrier in _CARRIER_FIELDS.items():
+        spec_files = [f for f in request.files.getlist(f"{field}_spec") if f and f.filename]
+        if not spec_files:
+            continue
+        spec_paths = _save_uploads(spec_files, tmp, f"{field}_spec")
+        inv_files = [f for f in request.files.getlist(f"{field}_invoice") if f and f.filename]
+        invoice_paths = _save_uploads(inv_files, tmp, f"{field}_inv")
+        inputs.append(CarrierInput(
+            carrier=carrier, spec_paths=spec_paths, invoice_paths=invoice_paths))
+    return inputs
+
+
 def _supabase_configured() -> bool:
     url = os.environ.get("SUPABASE_URL")
     key = (os.environ.get("SUPABASE_KEY") or os.environ.get("SUPABASE_SERVICE_KEY")
@@ -100,12 +115,31 @@ def build_app() -> Flask:
             return jsonify({"configured": True, "ok": False,
                             "error": f"{type(exc).__name__}: {exc}"}), 500
 
+    @app.post("/api/parse")
+    def parse_route():
+        """Sparsuj JEDNĄ porcję zestawień/faktur (bez ERP) -> mały pakiet JSON.
+
+        Klient wywołuje to wielokrotnie (duże dane porcjami, każda < ~4,5 MB),
+        zbiera pakiety i wysyła złożoną całość do /api/run (pole 'parsed')."""
+        try:
+            period = (request.form.get("period") or "").strip()
+            tmp = Path(tempfile.mkdtemp(prefix="ta_parse_"))
+            carrier_inputs = _carrier_inputs_from_request(tmp)
+            if not carrier_inputs:
+                return jsonify({"error": "Brak plików zestawień/faktur do sparsowania."}), 400
+            from .service import parse_batch
+            return jsonify(parse_batch(carrier_inputs, period))
+        except Exception as exc:  # noqa: BLE001
+            return jsonify({"error": f"{type(exc).__name__}: {exc}",
+                            "trace": traceback.format_exc()[-1500:]}), 500
+
     @app.post("/api/run")
     def run():
         try:
             period = (request.form.get("period") or "").strip()  # puste => auto z dokumentów
             erp_source = (request.form.get("erp_source") or "file").strip()
             save_supabase = (request.form.get("save_supabase") or "").lower() in ("1", "true", "on", "yes")
+            parsed_raw = request.form.get("parsed")  # tryb „na raty": gotowe sparsowane porcje
             tmp = Path(tempfile.mkdtemp(prefix="ta_in_"))
 
             erp_path = None
@@ -119,19 +153,22 @@ def build_app() -> Flask:
                 erp_path = tmp / "erp.csv"
                 request.files["erp"].save(erp_path)
 
-            carrier_inputs: list[CarrierInput] = []
-            for field, carrier in _CARRIER_FIELDS.items():
-                spec_files = [f for f in request.files.getlist(f"{field}_spec")
-                              if f and f.filename]
-                if not spec_files:
-                    continue
-                spec_paths = _save_uploads(spec_files, tmp, f"{field}_spec")
-                inv_files = [f for f in request.files.getlist(f"{field}_invoice")
-                             if f and f.filename]
-                invoice_paths = _save_uploads(inv_files, tmp, f"{field}_inv")
-                carrier_inputs.append(CarrierInput(
-                    carrier=carrier, spec_paths=spec_paths, invoice_paths=invoice_paths))
+            # --- tryb „na raty": audyt z gotowych, złożonych porcji ------------
+            if parsed_raw:
+                import json as _json
+                try:
+                    parsed_bundle = _json.loads(parsed_raw)
+                except (ValueError, TypeError):
+                    return jsonify({"error": "Nieprawidłowy pakiet 'parsed' (nie-JSON)."}), 400
+                if not (parsed_bundle.get("carriers") if isinstance(parsed_bundle, dict) else None):
+                    return jsonify({"error": "Pakiet 'parsed' nie zawiera żadnych zestawień."}), 400
+                summary = run_audit(str(erp_path) if erp_path else None, [], period,
+                                    erp_source=erp_source, save_supabase=save_supabase,
+                                    parsed_bundle=parsed_bundle)
+                return jsonify(summary)
 
+            # --- tryb plikowy: zestawienia+faktury w tym żądaniu --------------
+            carrier_inputs = _carrier_inputs_from_request(tmp)
             if not carrier_inputs:
                 return jsonify({"error": "Wgraj co najmniej jedno zestawienie przewoźnika."}), 400
 

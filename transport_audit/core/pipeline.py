@@ -19,7 +19,9 @@ from .config import Config, load_config
 from .erp import ErpDataset, load_erp
 from .margin import MarginReport, compute_margins
 from .matcher import Matcher, MatchOutcome
-from .models import Carrier, Delivery, Invoice
+from .models import (
+    Carrier, Delivery, DeliveryStatus, FeeComponent, FeeType, Invoice, ServiceLevel,
+)
 from .reconciler import CarrierRecon, ReconResult, aggregate, reconcile_run
 from .tariff_model import TariffModel
 
@@ -169,63 +171,142 @@ def _merge_zsummary(acc: dict, new: dict) -> dict:
             "total": round((acc.get("total") or 0.0) + (new.get("total") or 0.0), 2)}
 
 
+# --------------------------------------------------------------------------- #
+# Parsowanie „na raty" (§ web): duże zestawienia przekraczają limit żądania
+# Vercela (~4,5 MB), więc parsujemy je partiami po stronie serwera i zbieramy
+# WYNIKI (małe) w kliencie, a audyt liczymy na złożonym, pełnym okresie.
+# --------------------------------------------------------------------------- #
+
+def _delivery_from_dict(d: dict) -> Delivery:
+    return Delivery(
+        carrier=Carrier(d["carrier"]), invoice_no=d["invoice_no"], period=d["period"],
+        order_ref_raw=d["order_ref_raw"], order_core=d.get("order_core"),
+        status=DeliveryStatus(d.get("status", "UNKNOWN")),
+        service_level=ServiceLevel(d.get("service_level", "UNKNOWN")),
+        waybill=d.get("waybill"), qty=d.get("qty"), weight_kg=d.get("weight_kg"),
+        volume_m3=d.get("volume_m3"), total_cost_net=d.get("total_cost_net", 0.0),
+        fees=[FeeComponent(FeeType(f["type_code"]), f["type_raw"], f["amount_net"])
+              for f in d.get("fees", [])],
+        receiver_name=d.get("receiver_name"), receiver_postcode=d.get("receiver_postcode"),
+        receiver_city=d.get("receiver_city"), delivery_date=d.get("delivery_date"),
+        settlement_no=d.get("settlement_no"), source_row=d.get("source_row"))
+
+
+def _invoice_from_dict(i: dict) -> Invoice:
+    return Invoice(
+        carrier=Carrier(i["carrier"]), invoice_no=i["invoice_no"], seller=i.get("seller"),
+        nip=i.get("nip"), issue_date=i.get("issue_date"), period=i.get("period"),
+        net=i.get("net"), vat=i.get("vat"), gross=i.get("gross"),
+        payment_due=i.get("payment_due"), settlement_no=i.get("settlement_no"),
+        source_path=i.get("source_path"))
+
+
+def _parse_one_carrier(ci: CarrierInput, period: str, cfg: Config):
+    """Sparsuj wszystkie zestawienia+faktury jednego przewoźnika (bez uzgadniania)."""
+    specs = ci.all_specs()
+    parsed_invoices = [inv for inv in (parse_invoice(p, ci.carrier)
+                                       for p in ci.all_invoices()) if inv]
+    combined = _combine_invoices(parsed_invoices, ci.carrier)
+    invoice_no = (combined.invoice_no if combined and combined.invoice_no
+                  else (Path(specs[0]).stem if specs else ci.carrier.value))
+    settlement_no = ci.settlement_no or (combined.settlement_no if combined else None)
+    adapter = ADAPTERS[ci.carrier](invoice_no=invoice_no, period=period, cfg=cfg,
+                                   settlement_no=settlement_no)
+    deliveries: list[Delivery] = []
+    stated_sum, stated_seen, zs = 0.0, False, {}
+    for sp in specs:
+        deliveries.extend(adapter.parse(sp))
+        st = _stated_total(ci.carrier, adapter, sp)
+        if st is not None:
+            stated_sum += st
+            stated_seen = True
+        if ci.carrier is Carrier.ZADBANO:
+            zs = _merge_zsummary(zs, zadbano_summary(sp))
+    stated = round(stated_sum, 2) if stated_seen else None
+    return deliveries, parsed_invoices, combined, stated, zs
+
+
+def _parse_carriers(carrier_inputs: list[CarrierInput], period: str, cfg: Config):
+    """Parsuj + uzgodnij wszystkich przewoźników (ścieżka plikowa)."""
+    all_deliveries: list[Delivery] = []
+    invoices: list[Invoice] = []
+    recon_results: list[ReconResult] = []
+    zsummary: dict = {}
+    for ci in carrier_inputs:
+        dels, parsed_invs, combined, stated, zs = _parse_one_carrier(ci, period, cfg)
+        all_deliveries.extend(dels)
+        invoices.extend(parsed_invs)
+        recon_results.append(reconcile_run(dels, combined, stated_total=stated, cfg=cfg))
+        if zs:
+            zsummary = _merge_zsummary(zsummary, zs)
+    return all_deliveries, invoices, recon_results, zsummary
+
+
+def parse_carrier_batch(carrier_inputs: list[CarrierInput], period: str,
+                        cfg: Config | None = None) -> dict:
+    """Sparsuj JEDNĄ partię plików -> serializowalny słownik per przewoźnik.
+
+    Zwraca ``{"carriers": {CARRIER: {deliveries, invoices, stated_total}}, ...}``
+    do zebrania w kliencie i połączenia w pełny okres (funkcja `_rebuild_from_parsed`).
+    """
+    cfg = cfg or load_config()
+    carriers: dict[str, dict] = {}
+    zsummary: dict = {}
+    for ci in carrier_inputs:
+        dels, parsed_invs, _combined, stated, zs = _parse_one_carrier(ci, period, cfg)
+        blk = carriers.setdefault(
+            ci.carrier.value, {"deliveries": [], "invoices": [], "stated_total": None})
+        blk["deliveries"].extend(d.to_dict() for d in dels)
+        blk["invoices"].extend(inv.to_dict() for inv in parsed_invs)
+        if stated is not None:
+            blk["stated_total"] = round((blk["stated_total"] or 0.0) + stated, 2)
+        if zs:
+            zsummary = _merge_zsummary(zsummary, zs)
+    return {"carriers": carriers, "zadbano_summary": zsummary}
+
+
+def _rebuild_from_parsed(parsed: dict, cfg: Config):
+    """Odtwórz dostawy/faktury/uzgodnienia ze zsumowanych partii (ścieżka web)."""
+    all_deliveries: list[Delivery] = []
+    invoices: list[Invoice] = []
+    recon_results: list[ReconResult] = []
+    for cval, blk in (parsed.get("carriers") or {}).items():
+        carrier = Carrier(cval)
+        dels = [_delivery_from_dict(d) for d in blk.get("deliveries", [])]
+        invs = [_invoice_from_dict(i) for i in blk.get("invoices", [])]
+        all_deliveries.extend(dels)
+        invoices.extend(invs)
+        combined = _combine_invoices(invs, carrier)
+        recon_results.append(reconcile_run(
+            dels, combined, stated_total=blk.get("stated_total"), cfg=cfg))
+    return all_deliveries, invoices, recon_results, (parsed.get("zadbano_summary") or {})
+
+
 def run_pipeline(
     erp_path: str | Path | None,
     carrier_inputs: list[CarrierInput],
     period: str,
     cfg: Config | None = None,
     erp_source: str = "file",
+    parsed: dict | None = None,
 ) -> PipelineResult:
     """Uruchom pipeline. ``erp_source``: 'file' (Eksport.csv) lub 'supabase'.
 
     Dla 'supabase' najpierw parsujemy zestawienia przewoźników (żeby poznać
     rdzenie zamówień), a potem pobieramy z Supabase tylko te zamówienia +
     okno okresu (do nieobciążonych) — bez wgrywania całego Eksport.csv.
+
+    ``parsed`` (opcjonalnie): gotowa, zsumowana treść zestawień/faktur z wielu
+    partii (patrz `parse_carrier_batch`) — pomija parsowanie plików i liczy
+    audyt na złożonym, pełnym okresie. Wtedy ``carrier_inputs`` jest ignorowane.
     """
     cfg = cfg or load_config()
 
-    all_deliveries: list[Delivery] = []
-    invoices: list[Invoice] = []
-    recon_results: list[ReconResult] = []
-    zsummary: dict = {}
-
-    for ci in carrier_inputs:
-        specs = ci.all_specs()
-        inv_paths = ci.all_invoices()
-
-        # faktury: parsuj wszystkie, złóż w jedną (suma netto) do uzgodnienia
-        parsed_invoices = [parse_invoice(p, ci.carrier) for p in inv_paths]
-        invoices.extend(i for i in parsed_invoices if i)
-        combined_invoice = _combine_invoices(parsed_invoices, ci.carrier)
-
-        invoice_no = (combined_invoice.invoice_no
-                      if combined_invoice and combined_invoice.invoice_no
-                      else (Path(specs[0]).stem if specs else ci.carrier.value))
-        settlement_no = ci.settlement_no or (
-            combined_invoice.settlement_no if combined_invoice else None)
-
-        adapter_cls = ADAPTERS[ci.carrier]
-        adapter = adapter_cls(invoice_no=invoice_no, period=period, cfg=cfg,
-                              settlement_no=settlement_no)
-
-        # wiele zestawień -> jeden pulowany przebieg przewoźnika
-        carrier_deliveries: list[Delivery] = []
-        stated_sum = 0.0
-        stated_seen = False
-        for sp in specs:
-            d = adapter.parse(sp)
-            carrier_deliveries.extend(d)
-            st = _stated_total(ci.carrier, adapter, sp)
-            if st is not None:
-                stated_sum += st
-                stated_seen = True
-            if ci.carrier is Carrier.ZADBANO:
-                zsummary = _merge_zsummary(zsummary, zadbano_summary(sp))
-        all_deliveries.extend(carrier_deliveries)
-
-        recon_results.append(reconcile_run(
-            carrier_deliveries, combined_invoice,
-            stated_total=(round(stated_sum, 2) if stated_seen else None), cfg=cfg))
+    if parsed is not None:
+        all_deliveries, invoices, recon_results, zsummary = _rebuild_from_parsed(parsed, cfg)
+    else:
+        all_deliveries, invoices, recon_results, zsummary = _parse_carriers(
+            carrier_inputs, period, cfg)
 
     # --- okres: użyj podanego (YYYY-MM) albo wykryj z dokumentów -------------
     period = _resolve_period(period, invoices, all_deliveries)

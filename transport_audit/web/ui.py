@@ -159,9 +159,11 @@ INDEX_HTML = r"""<!doctype html>
         <div class="track"><div class="bar" id="progressBar"></div></div>
         <div class="ptxt" id="progressTxt"></div>
       </div>
-      <p class="muted" style="margin-top:10px">Wgraj min. Eksport ERP + jedno zestawienie.
-        Bez plików kliknij „Pokaż na danych demo" — policzy na wbudowanym, syntetycznym
-        zestawie (golden cases).</p>
+      <p class="muted" style="margin-top:10px">Możesz dodawać zestawienia i faktury
+        <b>partiami, w dowolnej kolejności</b> (przyciskami „➕ Dodaj pliki") — narzędzie
+        sparsuje każdą porcję osobno, żeby zmieścić się w limicie ~4,5 MB, i policzy audyt
+        na <b>całym okresie łącznie</b>. Duży Eksport.csv? Przełącz źródło ERP na „Supabase"
+        (bez uploadu CSV). Bez plików — „Pokaż na danych demo".</p>
     </div>
 
     <!-- PRAWY PANEL: wyniki -->
@@ -307,6 +309,38 @@ function renderChips(key){
   ).join('');
 }
 
+// Podziel pliki na porcje mieszczące się w limicie żądania (całych plików nie tniemy).
+function chunkFiles(items, limit){
+  const chunks=[]; let cur=[], sz=0;
+  for(const it of items){
+    if(it.file.size > limit)
+      throw new Error('Plik „'+it.file.name+'" ('+(it.file.size/1048576).toFixed(1)
+        +' MB) przekracza limit ~4,5 MB pojedynczego żądania Vercela. Dla tak dużego '
+        +'pojedynczego pliku użyj CLI (bez limitu).');
+    if(sz+it.file.size > limit && cur.length){ chunks.push(cur); cur=[]; sz=0; }
+    cur.push(it); sz+=it.file.size;
+  }
+  if(cur.length) chunks.push(cur);
+  return chunks;
+}
+
+// Dołóż sparsowaną porcję do zbieranej całości (per przewoźnik; sumy dopłat Zadbano).
+function mergeParsed(acc, batch){
+  for(const [c,blk] of Object.entries(batch.carriers||{})){
+    const a = acc.carriers[c] || (acc.carriers[c]={deliveries:[],invoices:[],stated_total:null});
+    a.deliveries.push(...(blk.deliveries||[]));
+    a.invoices.push(...(blk.invoices||[]));
+    if(blk.stated_total!=null) a.stated_total=(a.stated_total||0)+blk.stated_total;
+  }
+  const z=batch.zadbano_summary;
+  if(z && z.categories){
+    const az = acc.zadbano_summary.categories ? acc.zadbano_summary
+      : (acc.zadbano_summary={categories:{},total:0});
+    for(const [k,v] of Object.entries(z.categories)) az.categories[k]=(az.categories[k]||0)+v;
+    az.total=(az.total||0)+(z.total||0);
+  }
+}
+
 // --- pasek postępu ---
 function showProgress(txt, indet){
   const p=$('progress'); p.classList.remove('hidden');
@@ -341,29 +375,69 @@ function xhrPost(url, fd, onProgress){
 async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
   const src=erpSource();
-  const fd=new FormData();
-  fd.append('period', ($('period').value||'').trim());
-  fd.append('erp_source', src);
-  if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
-  let total=0;
-  if(src==='file'){
-    const erp=$('erp').files[0];
-    if(!erp){ showErr('Wgraj plik Eksport ERP (CSV), wybierz źródło Supabase, albo użyj „Pokaż na danych demo".'); return; }
-    fd.append('erp', erp); total+=erp.size;
-  }
+  // 1) zbierz WSZYSTKIE dołożone pliki przewoźników (spec + faktury), dowolna kolejność
+  const items=[];
   const map=[['SPT','spt_spec','spt_inv'],['ZADBANO','zad_spec','zad_inv'],['DM_TRANS','dm_spec','dm_inv']];
-  let any=false;
   for(const [c,sk,ik] of map){
-    for(const f of FILES[sk]){ fd.append(c+'_spec', f); total+=f.size; any=true; }
-    for(const f of FILES[ik]){ fd.append(c+'_invoice', f); total+=f.size; }
+    for(const f of FILES[sk]) items.push({field:c+'_spec', file:f});
+    for(const f of FILES[ik]) items.push({field:c+'_invoice', file:f});
   }
-  if(!any){ showErr('Dodaj co najmniej jedno zestawienie przewoźnika (przycisk „➕ Dodaj pliki").'); return; }
-  if(total > VERCEL_BODY_LIMIT){
-    showErr('Suma wgranych plików to '+(total/1048576).toFixed(1)+' MB, a limit żądania Vercela to '
-      +'~4,5 MB. Zmniejsz Eksport.csv, wgraj mniej plików naraz, użyj CLI, albo przełącz źródło ERP na „Supabase".');
-    return;
+  if(!items.length){ showErr('Dodaj co najmniej jedno zestawienie przewoźnika (przycisk „➕ Dodaj pliki").'); return; }
+
+  let erpFile=null;
+  if(src==='file'){
+    erpFile=$('erp').files[0];
+    if(!erpFile){ showErr('Wgraj plik Eksport ERP (CSV), wybierz źródło Supabase, albo użyj „Pokaż na danych demo".'); return; }
+    if(erpFile.size > VERCEL_BODY_LIMIT){ showErr('Sam Eksport.csv ('+(erpFile.size/1048576).toFixed(1)
+      +' MB) przekracza limit ~4,5 MB. Przełącz źródło ERP na „Supabase" (bez uploadu CSV) albo użyj CLI.'); return; }
   }
-  await run('/api/run', fd);
+
+  // 2) podziel pliki na porcje < limit (żeby zmieścić się w limicie żądania)
+  let chunks;
+  try{ chunks = chunkFiles(items, VERCEL_BODY_LIMIT); }
+  catch(e){ showErr(e.message); return; }
+
+  setLoading(true); hideErr();
+  try{
+    // 3) FAZA 1 — parsuj każdą porcję osobno, zbieraj drobne wyniki
+    const merged={carriers:{}, zadbano_summary:{}};
+    for(let i=0;i<chunks.length;i++){
+      const fd=new FormData();
+      fd.append('period', ($('period').value||'').trim());
+      for(const it of chunks[i]) fd.append(it.field, it.file);
+      const res=await xhrPost('/api/parse', fd, (frac,done)=>{
+        if(done) showProgress('Porcja '+(i+1)+'/'+chunks.length+' — parsuję…', true);
+        else setProgress(frac, 'Wysyłam pliki (porcja '+(i+1)+'/'+chunks.length+'): '+Math.round(frac*100)+'%');
+      });
+      if(!res.ct.includes('json')){ showErr('Parsowanie: serwer zwrócił nie-JSON ('+res.status+').'); return; }
+      const data=JSON.parse(res.text);
+      if(res.status>=400 || data.error){ showErr(data.error||('Błąd parsowania porcji '+(i+1)+' ('+res.status+')')); return; }
+      mergeParsed(merged, data);
+    }
+
+    // 4) FAZA 2 — audyt na złożonym, PEŁNYM okresie (mały pakiet 'parsed' + ERP)
+    showProgress('Liczę audyt na pełnym okresie…', true);
+    const fd=new FormData();
+    fd.append('period', ($('period').value||'').trim());
+    fd.append('erp_source', src);
+    if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
+    if(erpFile) fd.append('erp', erpFile);
+    fd.append('parsed', JSON.stringify(merged));
+    const res=await xhrPost('/api/run', fd, (frac,done)=>{
+      if(done) showProgress('Liczę audyt…', true);
+      else setProgress(frac, 'Wysyłam dane do audytu: '+Math.round(frac*100)+'%');
+    });
+    if(!res.ct.includes('json')){
+      const txt=(res.text||'').slice(0,300);
+      if(res.status===413) showErr('Dane do audytu przekraczają limit — jeśli ERP jest z pliku, przełącz źródło na „Supabase".');
+      else showErr('Serwer zwrócił nie-JSON ('+res.status+'): '+txt);
+      return;
+    }
+    const d=JSON.parse(res.text);
+    if(res.status>=400 || d.error){ showErr(d.error||('Błąd '+res.status)); return; }
+    render(d);
+  }catch(e){ showErr('Nie udało się połączyć: '+e.message); }
+  finally{ setLoading(false); hideProgress(); }
 }
 
 async function run(url, fd){
