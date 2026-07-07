@@ -201,8 +201,14 @@ def _invoice_from_dict(i: dict) -> Invoice:
         source_path=i.get("source_path"))
 
 
-def _parse_one_carrier(ci: CarrierInput, period: str, cfg: Config):
-    """Sparsuj wszystkie zestawienia+faktury jednego przewoźnika (bez uzgadniania)."""
+def _parse_one_carrier(ci: CarrierInput, period: str, cfg: Config,
+                       with_stated_total: bool = True):
+    """Sparsuj wszystkie zestawienia+faktury jednego przewoźnika (bez uzgadniania).
+
+    ``with_stated_total=False`` pomija DRUGI przebieg po PDF (odczyt stopki
+    „PODSUMOWANIE") — używane w web, gdzie liczy się czas (limit ~60 s), a
+    stopka daje tylko dodatkową notę sanity, nie wpływa na sumę uzgodnienia.
+    """
     specs = ci.all_specs()
     parsed_invoices = [inv for inv in (parse_invoice(p, ci.carrier)
                                        for p in ci.all_invoices()) if inv]
@@ -216,10 +222,11 @@ def _parse_one_carrier(ci: CarrierInput, period: str, cfg: Config):
     stated_sum, stated_seen, zs = 0.0, False, {}
     for sp in specs:
         deliveries.extend(adapter.parse(sp))
-        st = _stated_total(ci.carrier, adapter, sp)
-        if st is not None:
-            stated_sum += st
-            stated_seen = True
+        if with_stated_total:
+            st = _stated_total(ci.carrier, adapter, sp)
+            if st is not None:
+                stated_sum += st
+                stated_seen = True
         if ci.carrier is Carrier.ZADBANO:
             zs = _merge_zsummary(zs, zadbano_summary(sp))
     stated = round(stated_sum, 2) if stated_seen else None
@@ -253,7 +260,9 @@ def parse_carrier_batch(carrier_inputs: list[CarrierInput], period: str,
     carriers: dict[str, dict] = {}
     zsummary: dict = {}
     for ci in carrier_inputs:
-        dels, parsed_invs, _combined, stated, zs = _parse_one_carrier(ci, period, cfg)
+        # web: pomijamy drugi przebieg po PDF (stopka), by zmieścić się w limicie czasu
+        dels, parsed_invs, _combined, stated, zs = _parse_one_carrier(
+            ci, period, cfg, with_stated_total=False)
         blk = carriers.setdefault(
             ci.carrier.value, {"deliveries": [], "invoices": [], "stated_total": None})
         blk["deliveries"].extend(d.to_dict() for d in dels)

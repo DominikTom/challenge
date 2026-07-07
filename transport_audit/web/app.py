@@ -33,15 +33,20 @@ def _save_uploads(files, tmp: Path, prefix: str) -> list[str]:
     return paths
 
 
-def _carrier_inputs_from_request(tmp: Path) -> list[CarrierInput]:
-    """Zbierz CarrierInput z pól multipart (wiele zestawień/faktur per przewoźnik)."""
+def _carrier_inputs_from_request(tmp: Path, allow_invoice_only: bool = False) -> list[CarrierInput]:
+    """Zbierz CarrierInput z pól multipart (wiele zestawień/faktur per przewoźnik).
+
+    ``allow_invoice_only`` (dla /api/parse): dopuść porcję zawierającą same
+    faktury — front wysyła zestawienia i faktury w osobnych żądaniach, żeby
+    każde zmieściło się w limicie czasu; łączymy je dopiero po stronie klienta.
+    """
     inputs: list[CarrierInput] = []
     for field, carrier in _CARRIER_FIELDS.items():
         spec_files = [f for f in request.files.getlist(f"{field}_spec") if f and f.filename]
-        if not spec_files:
+        inv_files = [f for f in request.files.getlist(f"{field}_invoice") if f and f.filename]
+        if not spec_files and not (allow_invoice_only and inv_files):
             continue
         spec_paths = _save_uploads(spec_files, tmp, f"{field}_spec")
-        inv_files = [f for f in request.files.getlist(f"{field}_invoice") if f and f.filename]
         invoice_paths = _save_uploads(inv_files, tmp, f"{field}_inv")
         inputs.append(CarrierInput(
             carrier=carrier, spec_paths=spec_paths, invoice_paths=invoice_paths))
@@ -124,7 +129,7 @@ def build_app() -> Flask:
         try:
             period = (request.form.get("period") or "").strip()
             tmp = Path(tempfile.mkdtemp(prefix="ta_parse_"))
-            carrier_inputs = _carrier_inputs_from_request(tmp)
+            carrier_inputs = _carrier_inputs_from_request(tmp, allow_invoice_only=True)
             if not carrier_inputs:
                 return jsonify({"error": "Brak plików zestawień/faktur do sparsowania."}), 400
             from .service import parse_batch

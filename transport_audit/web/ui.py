@@ -309,16 +309,21 @@ function renderChips(key){
   ).join('');
 }
 
-// Podziel pliki na porcje mieszczące się w limicie żądania (całych plików nie tniemy).
+// Podziel pliki na porcje: KAŻDE zestawienie (ciężkie do sparsowania) idzie
+// w osobnym żądaniu, żeby zmieścić się w limicie CZASU serwera (~60 s). Faktury
+// są małe -> grupujemy je po rozmiarze. Pojedynczych plików nie tniemy.
 function chunkFiles(items, limit){
-  const chunks=[]; let cur=[], sz=0;
-  for(const it of items){
-    if(it.file.size > limit)
-      throw new Error('Plik „'+it.file.name+'" ('+(it.file.size/1048576).toFixed(1)
-        +' MB) przekracza limit ~4,5 MB pojedynczego żądania Vercela. Dla tak dużego '
-        +'pojedynczego pliku użyj CLI (bez limitu).');
-    if(sz+it.file.size > limit && cur.length){ chunks.push(cur); cur=[]; sz=0; }
-    cur.push(it); sz+=it.file.size;
+  const tooBig = items.find(i=>i.file.size > limit);
+  if(tooBig) throw new Error('Plik „'+tooBig.file.name+'" ('+(tooBig.file.size/1048576).toFixed(1)
+    +' MB) przekracza limit ~4,5 MB pojedynczego żądania Vercela. Dla tak dużego pojedynczego '
+    +'pliku użyj CLI (bez limitu).');
+  const specs = items.filter(i=>/_spec$/.test(i.field));
+  const invs  = items.filter(i=>/_invoice$/.test(i.field));
+  const chunks = specs.map(s=>[s]);          // 1 zestawienie = 1 żądanie parsowania
+  let cur=[], sz=0;
+  for(const iv of invs){
+    if(sz+iv.file.size > limit && cur.length){ chunks.push(cur); cur=[]; sz=0; }
+    cur.push(iv); sz+=iv.file.size;
   }
   if(cur.length) chunks.push(cur);
   return chunks;
@@ -409,7 +414,14 @@ async function runUpload(){
         if(done) showProgress('Porcja '+(i+1)+'/'+chunks.length+' — parsuję…', true);
         else setProgress(frac, 'Wysyłam pliki (porcja '+(i+1)+'/'+chunks.length+'): '+Math.round(frac*100)+'%');
       });
-      if(!res.ct.includes('json')){ showErr('Parsowanie: serwer zwrócił nie-JSON ('+res.status+').'); return; }
+      if(!res.ct.includes('json')){
+        if([502,503,504].includes(res.status))
+          showErr('Parsowanie „'+(chunks[i][0]?chunks[i][0].file.name:('porcja '+(i+1)))+'" '
+            +'przekroczyło limit czasu serwera (~60 s) — zwykle bardzo duże/wielostronicowe '
+            +'zestawienie. Podziel plik na krótsze okresy albo użyj CLI (bez limitu czasu).');
+        else showErr('Parsowanie: serwer zwrócił nie-JSON ('+res.status+').');
+        return;
+      }
       const data=JSON.parse(res.text);
       if(res.status>=400 || data.error){ showErr(data.error||('Błąd parsowania porcji '+(i+1)+' ('+res.status+')')); return; }
       mergeParsed(merged, data);

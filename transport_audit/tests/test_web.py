@@ -131,6 +131,19 @@ def test_parse_requires_files(client):
     assert r.status_code == 400
 
 
+def test_parse_accepts_invoice_only_batch(client):
+    """Front wysyła zestawienia i faktury w osobnych żądaniach (1 plik/żądanie,
+    limit czasu). Porcja z samą fakturą (bez zestawienia) musi zostać sparsowana,
+    inaczej reconciliation traci netto faktury."""
+    b = client.post("/api/parse", data={
+        "SPT_invoice": (open(SAMPLE / "invoice_spt.pdf", "rb"), "i.pdf"),
+    }, content_type="multipart/form-data").get_json()
+    assert "SPT" in b["carriers"]
+    inv = b["carriers"]["SPT"]["invoices"]
+    assert inv and inv[0]["net"] == pytest.approx(29225.96, abs=0.01)
+    assert b["carriers"]["SPT"]["deliveries"] == []
+
+
 def test_upload_run_without_invoice_still_computes(client):
     # bez faktury: audyt liczy koszty, ale nie ma czego uzgadniać (expected_net=None)
     data = {
