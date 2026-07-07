@@ -62,6 +62,11 @@ INDEX_HTML = r"""<!doctype html>
     border-radius:8px;font-size:13px;display:inline-block}
   a.dl:hover{border-color:var(--acc)}
   code{background:#0b0f16;padding:1px 5px;border-radius:5px;font-size:12px}
+  .nav{display:flex;gap:8px;margin-top:14px}
+  .navbtn{background:transparent;border:1px solid var(--bd);color:var(--mut);border-radius:8px;
+    padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer}
+  .navbtn.active{background:var(--panel);color:var(--tx);border-color:var(--acc)}
+  tr.sep td{border-top:2px solid var(--acc)}
 </style>
 </head>
 <body>
@@ -69,9 +74,13 @@ INDEX_HTML = r"""<!doctype html>
   <h1>Audyt kosztów transportu — MyBed / Delta Industries</h1>
   <p>Przypisanie realnego kosztu dostawy, audyt (duble, cross-carrier, nieudane, przepłaty)
      i uzgodnienie z fakturami zbiorczymi SPT / Zadbano / D&amp;M Trans.</p>
+  <div class="nav">
+    <button class="navbtn active" id="navAudyt" onclick="showView('audyt')">Audyt</button>
+    <button class="navbtn" id="navCenniki" onclick="showView('cenniki')">Cenniki</button>
+  </div>
 </header>
 <div class="wrap">
-  <div class="grid">
+  <div class="grid" id="viewAudyt">
     <!-- LEWY PANEL: wejście -->
     <div class="panel">
       <h2>Dane wejściowe</h2>
@@ -129,6 +138,7 @@ INDEX_HTML = r"""<!doctype html>
       <div id="result" class="hidden"></div>
     </div>
   </div>
+  <div id="viewCenniki" class="hidden"></div>
 </div>
 
 <script>
@@ -152,6 +162,67 @@ function onSrc(){
   const supa = erpSource()==='supabase';
   $('erpFileWrap').classList.toggle('hidden', supa);
   $('supaNote').classList.toggle('hidden', !supa);
+}
+
+// --- widoki: Audyt / Cenniki ---
+function showView(v){
+  const audyt = v==='audyt';
+  $('viewAudyt').classList.toggle('hidden', !audyt);
+  $('viewCenniki').classList.toggle('hidden', audyt);
+  $('navAudyt').classList.toggle('active', audyt);
+  $('navCenniki').classList.toggle('active', !audyt);
+  if(!audyt && !$('viewCenniki').dataset.loaded) loadTariffs();
+}
+async function loadTariffs(){
+  $('viewCenniki').innerHTML='<div class="panel"><p class="muted">Ładuję cenniki…</p></div>';
+  try{
+    const t = await (await fetch('/api/tariffs')).json();
+    $('viewCenniki').innerHTML = renderTariffs(t);
+    $('viewCenniki').dataset.loaded='1';
+  }catch(e){ $('viewCenniki').innerHTML='<div class="panel err">Nie udało się wczytać cenników: '+esc(e.message)+'</div>'; }
+}
+function bracketTable(t){
+  const cur=t.currency;
+  let h='<div class="scroll"><table><thead><tr><th class="num">Od [m³]</th><th class="num">Do [m³]</th>'
+    +'<th class="num">bez wniesienia</th><th class="num">z wniesieniem</th></tr></thead><tbody>';
+  for(const b of t.brackets){
+    h+=`<tr><td class="num">${b.from.toFixed(2)}</td><td class="num">${b.to.toFixed(2)}</td>`
+      +`<td class="num">${fmt(b.door)} ${cur}</td><td class="num">${fmt(b.carry)} ${cur}</td></tr>`;
+  }
+  h+='</tbody></table></div>';
+  h+=`<p class="muted" style="margin-top:8px">${esc(t.over_note||'')} · Montaż ${fmt(t.services.montaz)} ${cur} · `
+    +`Sprzątanie ${fmt(t.services.sprzatanie)} ${cur}. ${esc(t.services_note||'')}</p>`;
+  return h;
+}
+function matrixTable(t){
+  const cur=t.currency;
+  let h='<div class="scroll"><table><thead><tr><th>Objętość [m³]</th>';
+  for(const w of t.weights) h+=`<th class="num">≤${w} kg</th>`;
+  h+='</tr></thead><tbody>';
+  for(const r of t.rows){
+    h+=`<tr><td>${r.from.toFixed(1)}–${r.to.toFixed(1)}</td>`;
+    for(const p of r.prices) h+=`<td class="num">${fmt(p)}</td>`;
+    h+='</tr>';
+  }
+  h+='<tr class="sep"><td><b>Wniesienie +</b></td>';
+  for(const c of t.carry_in) h+=`<td class="num">${fmt(c)}</td>`; h+='</tr>';
+  h+='<tr><td><b>RUS +</b></td>';
+  for(const c of t.rus) h+=`<td class="num">${fmt(c)}</td>`; h+='</tr>';
+  h+='</tbody></table></div>';
+  const o=t.over||{};
+  h+=`<p class="muted" style="margin-top:8px">${esc(t.over_note||'')} Wniesienie +${fmt(o.carry_per_15_kg)}/15 kg, `
+    +`RUS +${fmt(o.rus_per_15_kg)}/15 kg. Ceny netto ${cur}.</p>`;
+  return h;
+}
+function renderTariffs(t){
+  const card=(title,sub,body)=>`<div class="panel sec"><h2>${title}</h2>`
+    +`<p class="muted" style="margin:-8px 0 10px">${sub}</p>${body}</div>`;
+  return '<div class="panel"><h2>Cenniki przewoźników</h2>'
+    +'<p class="muted">Stawki netto wynegocjowane z przewoźnikami — używane w audycie do wykrywania przepłat. '
+    +'Zweryfikuj liczby; jeśli coś się nie zgadza, poprawimy w źródle.</p></div>'
+    + card('SPT — Polska (PLN)','Stawka tabelaryczna wg objętości', bracketTable(t.SPT_PL))
+    + card('SPT — Niemcy (EUR)','Stawka tabelaryczna wg objętości', bracketTable(t.SPT_DE))
+    + card('Zadbano (PLN)','Macierz: objętość × maks. waga przesyłki (wybór kolumny: najmniejsza ≥ waga)', matrixTable(t.ZADBANO));
 }
 
 async function runDemo(){ await run('/api/sample', null); }

@@ -50,6 +50,11 @@ def build_app() -> Flask:
     def config():
         return jsonify({"supabase_configured": _supabase_configured()})
 
+    @app.get("/api/tariffs")
+    def tariffs():
+        from ..core.tariff_official import all_tariffs
+        return jsonify(all_tariffs())
+
     @app.get("/api/supabase-check")
     def supabase_check():
         """Diagnostyka połączenia: tani probe RPC audit_erp (kilka rdzeni)."""
