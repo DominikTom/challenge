@@ -15,7 +15,34 @@ albo None gdy brak cennika (np. D&M) lub wycena indywidualna.
 
 from __future__ import annotations
 
+import re
+
 from .models import ServiceLevel
+
+# Rynek PL vs DE (dla SPT). UWAGA: polskie kody w ERP bywają bez myślnika
+# (np. „48282”), więc po samym kodzie PL/DE jest niepewne — najlepszy sygnał to
+# waluta/kraj zamówienia (currency). # TODO(dom): przekazać currency z fact_orders.
+_PL_ZIP = re.compile(r"^\d{2}-\d{3}$")
+
+
+def infer_market(postcode: str | None, currency: str | None = None,
+                 country: str | None = None) -> str:
+    """Zwróć 'PL' lub 'DE'. Priorytet: kraj -> waluta -> kod pocztowy -> PL."""
+    if country:
+        c = country.strip().upper()
+        if c in ("DE", "DEU", "GERMANY", "NIEMCY"):
+            return "DE"
+        if c in ("PL", "POL", "POLAND", "POLSKA"):
+            return "PL"
+    if currency:
+        cur = currency.strip().upper()
+        if cur == "EUR":
+            return "DE"
+        if cur == "PLN":
+            return "PL"
+    if postcode and _PL_ZIP.match(postcode.strip()):
+        return "PL"
+    return "PL"  # domyślnie PL (bezpieczniej — cennik PLN)
 
 # --------------------------------------------------------------------------- #
 # SPT PL — formuła (PLN). Progi objętościowe: 0–0.99 co 0.1, potem co 0.2 do 7.99.
@@ -198,22 +225,24 @@ def _weight_col(weight_kg: float | None) -> int:
 
 
 def lookup_zadbano(volume_m3: float | None, weight_kg: float | None,
-                   service_level: ServiceLevel):
+                   service_level: ServiceLevel | None = None):
+    """Bazowa stawka transportu z macierzy (do porównania z komponentem TRANSPORT).
+
+    UWAGA: u Zadbano wniesienie jest OSOBNYM komponentem (Dopłata za standard),
+    więc tu zwracamy tylko bazę — nie doliczamy `carry_in` (to osobny check).
+    """
     if volume_m3 is None or volume_m3 <= 0:
         return None
     col = _weight_col(weight_kg)
-    base = None
     for row in ZADBANO["rows"]:
         if row["from"] < volume_m3 <= row["to"] or (volume_m3 == 0 and row["from"] == 0):
-            base = row["prices"][col]
-            break
-    if base is None:
-        # ponad tabelą (>3 m³ / >210 kg) — wycena indywidualna z dopłatami
-        return None
-    total = base
-    if service_level in _CARRY_LEVELS:
-        total += ZADBANO["carry_in"][col]
-    return (round(total, 2), ZADBANO["currency"])
+            return (round(row["prices"][col], 2), ZADBANO["currency"])
+    return None  # ponad tabelą (>3 m³ / >210 kg) — wycena indywidualna
+
+
+def zadbano_carry_in(weight_kg: float | None) -> float:
+    """Dopłata za wniesienie z macierzy Zadbano (do osobnego porównania)."""
+    return ZADBANO["carry_in"][_weight_col(weight_kg)]
 
 
 def expected_transport(carrier: str, market: str, volume_m3: float | None,

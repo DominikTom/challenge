@@ -117,6 +117,7 @@ carrier_aliases:
 thresholds:
   reconcile_tolerance: 0.01        # tolerancja uzgodnienia Σ vs netto FV
   tariff_overpay_multiplier: 1.20  # > mediana × 1.20 -> FLAG above tariff (§6.5)
+  official_overpay_multiplier: 1.05  # > oficjalna stawka × 1.05 -> FLAG (cennik dokładny)
   tariff_min_observations: 5       # min. obserwacji w klastrze, by flagować (§6.5)
   split_volume_tolerance: 0.25     # ±25% zgodności objętości dla split shipment (§6.1)
   volume_upcharge_tolerance: 0.20  # >20% rozjazdu objętości -> FLAG (§6.7)

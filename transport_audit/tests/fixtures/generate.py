@@ -167,6 +167,28 @@ class FlatLine:
 # ZADBANO — zestawienie itemized (target 98 172,50)
 # --------------------------------------------------------------------------- #
 
+def _zadbano_volume_for(cost: float, weight: float) -> float:
+    """Dobierz objętość z REALNEJ macierzy Zadbano tak, by baza transportu ≈ koszt.
+
+    Fikstura powstała pod twarde sumy uzgodnienia (§9), więc koszty nie były
+    wyprowadzane z cennika. Bez tej kalibracji każda zwykła linia wyglądałaby
+    jak „przepłata" (koszt >> baza macierzy dla małej objętości). Dobieramy
+    objętość odpowiadającą kosztowi → fikstura jest spójna z cennikiem i tylko
+    celowe anomalie są flagowane.
+    """
+    from transport_audit.core.tariff_official import ZADBANO, _weight_col
+
+    col = _weight_col(weight)
+    best_diff: float | None = None
+    best_vol = 1.0
+    for row in ZADBANO["rows"]:
+        diff = abs(row["prices"][col] - cost)
+        if best_diff is None or diff < best_diff:
+            best_diff = diff
+            best_vol = round((row["from"] + row["to"]) / 2, 3)
+    return best_vol
+
+
 def build_zadbano() -> tuple[list[ZLine], dict]:
     lines: list[ZLine] = []
 
@@ -268,7 +290,9 @@ def build_zadbano() -> tuple[list[ZLine], dict]:
     residual = round(ZADBANO_TARGET - running, 2)
 
     # --- filler: normalne DOOR zrealizowane, żeby trafić w 98 172,50 --------
-    n_fill = 90
+    # 200 linii → ~429 zł/linię (realny rząd wielkości Zadbano, w zakresie
+    # macierzy) zamiast ~953 zł przy 90 liniach (co dawało fałszywe „przepłaty").
+    n_fill = 200
     base = round(residual / n_fill, 2)
     fill_vals = [base] * (n_fill - 1)
     fill_vals.append(round(residual - sum(fill_vals), 2))
@@ -281,6 +305,30 @@ def build_zadbano() -> tuple[list[ZLine], dict]:
             order_ref=num, status="zrealizowane", standard="Dostawa",
             receiver=f"Klient Zad {i+1}", city="Warszawa", postcode=pc[:6],
             comps=[Comp("Transport", val)], weight=40, volume=0.8))
+
+    # --- kalibracja objętości do REALNEJ macierzy Zadbano -------------------
+    # Koszty są ustalone (twarde sumy §9), więc objętość dobieramy pod cennik:
+    #  * zwykłe linie: baza macierzy ≈ koszt → brak fałszywych flag „above tariff",
+    #  * klaster 90-001 + przepłata 48120: wspólna komórka (baza 450,52) — 600 zł
+    #    nadal flaguje przepłatę, a klaster ≥5 obs. uczy medianę,
+    #  * showcase innych reguł (48021 objętość, 47559 cross, 48020 rabat):
+    #    objętość poza macierzą (>3 m³) → reguła cennika ich nie dotyczy.
+    _CLUSTER_REFS = {f"Shoper{48100 + i}-1" for i in range(6)} | {"Shoper48120-1"}
+    _OUT_OF_MATRIX = {"Shoper47559-1_8801122", "Shoper48020-1"}
+    for ln in lines:
+        if ln.status != "zrealizowane":
+            continue  # nieudane/anulowane audytujemy osobno (nie jako przepłatę)
+        transport = next((c.amount for c in ln.comps if c.type_raw == "Transport"), 0.0)
+        if transport <= 0:
+            continue
+        if ln.order_ref == "Shoper48021-1":
+            ln.volume = 5.5              # >> mediana → „weryfikacja objętości" FLAG
+        elif ln.order_ref in _OUT_OF_MATRIX:
+            ln.volume = 3.2             # poza macierzą (cennik nie dotyczy)
+        elif ln.order_ref in _CLUSTER_REFS:
+            ln.volume, ln.weight = 2.95, 150.0   # baza 450,52 zł
+        else:
+            ln.volume = _zadbano_volume_for(transport, ln.weight)
 
     total = round(sum(line_total(l) for l in lines), 2)
     assert abs(total - ZADBANO_TARGET) < 0.01, f"Zadbano total {total} != {ZADBANO_TARGET}"

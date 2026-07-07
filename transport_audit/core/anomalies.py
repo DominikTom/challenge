@@ -187,9 +187,12 @@ class AnomalyDetector:
     # -- Reguła 5: przepłacenie (cennik) ---------------------------------- #
 
     def _rule_above_tariff(self, matches: list[MatchResult], result: AuditResult) -> None:
-        if self.tariff is None:
-            return
-        # mediana transportu per przewoźnik (do zawężenia INFO no_reference)
+        """Przepłata: najpierw względem OFICJALNEGO cennika (dokładny),
+        w razie braku danych/cennika — fallback do nauczonej mediany."""
+        from .tariff_official import expected_transport, infer_market
+
+        official_mult = float(self.cfg.thresholds.get("official_overpay_multiplier", 1.05))
+
         carrier_transport: dict[str, list[float]] = defaultdict(list)
         for m in matches:
             t = m.delivery.amount_of(FeeType.TRANSPORT)
@@ -199,28 +202,56 @@ class AnomalyDetector:
             c: statistics.median(v) for c, v in carrier_transport.items() if v}
 
         for m in matches:
-            transport = m.delivery.amount_of(FeeType.TRANSPORT)
+            d = m.delivery
+            transport = d.amount_of(FeeType.TRANSPORT)
             if transport <= 0:
                 continue
-            ev = self.tariff.evaluate(m.delivery, m.erp_order)
+            if d.status in _TERMINAL_FAIL:
+                continue  # nieudane/anulowane audytujemy w Nieudane_obciazone, nie jako przepłatę
+
+            # 1) OFICJALNY CENNIK (jeśli mamy objętość/wagę i zgodną walutę)
+            pc = (m.erp_order.postcode if m.erp_order else None) or d.receiver_postcode
+            market = infer_market(pc)
+            exp = expected_transport(d.carrier.value, market, d.volume_m3,
+                                     d.weight_kg, d.service_level)
+            if exp is not None:
+                price, cur = exp
+                charge_cur = "PLN"  # TODO(dom): SPT DE fakturowane w EUR -> kurs/waluta z zestawienia
+                if cur == charge_cur and price > 0:
+                    if transport > price * official_mult:
+                        pct = round((transport / price - 1) * 100, 1)
+                        result.flags.append(AuditFlag(
+                            order_core=d.order_core, carrier=d.carrier.value, rule=R_TARIFF,
+                            severity=Severity.FLAG,
+                            message=f"above official tariff (+{pct}%)",
+                            amount=transport, expected=price,
+                            delta=round(transport - price, 2),
+                            evidence=f"cennik {d.carrier.value}/{market}: oczekiwane {price} {cur} "
+                                     f"(obj={d.volume_m3}, waga={d.weight_kg})",
+                            order_number=m.erp_order.number if m.erp_order else None))
+                    continue  # cennik był porównywalny -> nie dubluj medianą
+
+            # 2) FALLBACK: nauczona mediana (brak cennika lub brak danych do lookupu)
+            if self.tariff is None:
+                continue
+            ev = self.tariff.evaluate(d, m.erp_order)
             if ev["verdict"] == "above_tariff":
                 median = ev["median"]
                 delta_pct = round((transport / median - 1) * 100, 1) if median else None
                 result.flags.append(AuditFlag(
-                    order_core=m.delivery.order_core, carrier=m.delivery.carrier.value,
+                    order_core=d.order_core, carrier=d.carrier.value,
                     rule=R_TARIFF, severity=Severity.FLAG,
-                    message=f"above tariff (+{delta_pct}%)",
+                    message=f"above tariff — mediana (+{delta_pct}%)",
                     amount=transport, expected=median,
                     delta=round(transport - median, 2) if median else None,
                     evidence=f"klaster n={ev['count']}, mediana={median}",
                     order_number=m.erp_order.number if m.erp_order else None))
             elif ev["verdict"] == "no_reference":
                 result.no_reference_count += 1
-                # INFO tylko dla linii powyżej mediany przewoźnika (actionable subset)
-                med = carrier_median.get(m.delivery.carrier.value)
+                med = carrier_median.get(d.carrier.value)
                 if med and transport > med:
                     result.flags.append(AuditFlag(
-                        order_core=m.delivery.order_core, carrier=m.delivery.carrier.value,
+                        order_core=d.order_core, carrier=d.carrier.value,
                         rule=R_TARIFF, severity=Severity.INFO,
                         message="no reference (za mało obserwacji w klastrze)",
                         amount=transport, expected=ev["median"],
