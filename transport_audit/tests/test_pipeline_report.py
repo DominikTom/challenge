@@ -63,6 +63,28 @@ def test_cost_breakdown_json_valid(pipeline_result):
     assert carriers == {"ZADBANO", "DM_TRANS"}
 
 
+def test_enriched_readable_breakdown(pipeline_result):
+    """Kolumna `koszt_skladniki` = czytelny opis zamiast surowego JSON-a."""
+    rows = build_enriched_rows(pipeline_result)
+    r = next(r for r in rows if r["Numer"] == "Shoper47559-1")
+    s = r["koszt_skladniki"]
+    assert "ZADBANO" in s and "D&M TRANS" in s
+    assert "Transport 480,00" in s and "zł" in s
+
+
+def test_enriched_csv_pl_money_and_json_last(pipeline_result, tmp_path):
+    """CSV: kwoty z przecinkiem dziesiętnym (Excel PL), JSON techniczny na końcu."""
+    import csv
+
+    from transport_audit.report import write_enriched_orders
+    p = tmp_path / "enriched.csv"
+    write_enriched_orders(pipeline_result, p)
+    rows = list(csv.DictReader(open(p, encoding="utf-8-sig"), delimiter=";"))
+    r = next(r for r in rows if r["Numer"] == "Shoper47559-1")
+    assert r["real_transport_cost_net"] == "1023,52"   # przecinek, nie kropka
+    assert list(rows[0].keys())[-1] == "cost_breakdown_json"
+
+
 def test_norm_period_from_docs():
     from transport_audit.core.pipeline import _norm_period
     assert _norm_period("FS/38/02/2026") == "2026-02"

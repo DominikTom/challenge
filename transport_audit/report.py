@@ -30,6 +30,30 @@ from .core.pipeline import PipelineResult
 
 
 # --------------------------------------------------------------------------- #
+# Formatowanie kwot dla czytelności (kontekst PL: Excel czyta przecinek jako
+# separator dziesiętny). Model danych trzymamy liczbowo — formatujemy dopiero
+# przy zapisie CSV.
+# --------------------------------------------------------------------------- #
+
+def _pl_amount(v) -> str:
+    """Kwota po polsku do opisu (1234.5 -> '1 234,50'); spacja = separator tysięcy."""
+    if v is None or v == "":
+        return ""
+    return f"{float(v):,.2f}".replace(",", " ").replace(".", ",")
+
+
+def _csv_amount(v) -> str:
+    """Kwota jako LICZBA dla Excela PL (1234.5 -> '1234,50'); bez separatora tysięcy."""
+    if v is None or v == "":
+        return ""
+    return f"{float(v):.2f}".replace(".", ",")
+
+
+# kolumny kwotowe w enriched_orders.csv formatowane pod Excel PL
+_CSV_AMOUNT_COLS = ("Suma", "Koszt dostawy", "real_transport_cost_net")
+
+
+# --------------------------------------------------------------------------- #
 # Indeksy pomocnicze
 # --------------------------------------------------------------------------- #
 
@@ -79,6 +103,7 @@ def build_enriched_rows(result: PipelineResult, cfg: Config | None = None) -> li
 
         carriers, methods, statuses, service_levels = [], [], [], []
         breakdown = []
+        readable_parts = []
         invoice_labels = []
         for m in matches:
             d = m.delivery
@@ -93,6 +118,11 @@ def build_enriched_rows(result: PipelineResult, cfg: Config | None = None) -> li
                 "total_net": round(d.total_cost_net, 2),
                 "fees": [f.to_dict() for f in d.fees],
             })
+            # czytelne rozbicie kosztu (zamiast surowego JSON-a w CSV)
+            fee_str = "; ".join(
+                f"{f.type_raw} {_pl_amount(f.amount_net)}" for f in d.fees) if d.fees else "—"
+            readable_parts.append(
+                f"{cfg.carrier_label(d.carrier.value)} {_pl_amount(d.total_cost_net)} zł [{fee_str}]")
             label = f"{d.invoice_no} {cfg.carrier_label(d.carrier.value)}"
             if label not in invoice_labels:
                 invoice_labels.append(label)
@@ -129,6 +159,7 @@ def build_enriched_rows(result: PipelineResult, cfg: Config | None = None) -> li
             "service_level_erp": order.service_level.value,
             "Faktura transportowa": filled,
             "real_transport_cost_net": real_cost,
+            "koszt_skladniki": " || ".join(readable_parts),
             "carrier": ",".join(carriers),
             "service_level_matched": ",".join(dict.fromkeys(service_levels)),
             "status_carrier": ",".join(dict.fromkeys(statuses)),
@@ -145,6 +176,13 @@ def write_enriched_orders(result: PipelineResult, path: str | Path,
                           cfg: Config | None = None) -> None:
     rows = build_enriched_rows(result, cfg)
     df = pd.DataFrame(rows)
+    # kwoty jako liczby czytelne dla Excela PL (przecinek dziesiętny)
+    for col in _CSV_AMOUNT_COLS:
+        if col in df.columns:
+            df[col] = df[col].map(_csv_amount)
+    # techniczny JSON na sam koniec — czytelne kolumny z przodu
+    if "cost_breakdown_json" in df.columns:
+        df = df[[c for c in df.columns if c != "cost_breakdown_json"] + ["cost_breakdown_json"]]
     df.to_csv(path, index=False, encoding="utf-8-sig", sep=";")
 
 

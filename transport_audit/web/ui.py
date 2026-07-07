@@ -353,7 +353,7 @@ function render(d){
   const sm = tbl([{t:'Rdzeń'},{t:'Przew.'},{t:'Opis'}],
     F.service_mismatch, r=>`<tr><td><code>${esc(r.order_core)}</code></td><td>${esc(r.carrier)}</td><td>${esc(r.message)}</td></tr>`);
 
-  const at = tbl([{t:'Rdzeń'},{t:'Przew.'},{t:'Koszt',num:1},{t:'Mediana',num:1},{t:'Opis'}],
+  const at = tbl([{t:'Rdzeń'},{t:'Przew.'},{t:'Koszt',num:1},{t:'Oczekiwane',num:1},{t:'Opis'}],
     F.above_tariff, r=>`<tr><td><code>${esc(r.order_core)}</code></td><td>${esc(r.carrier)}</td>
       <td class="num">${fmt(r.amount)}</td><td class="num">${fmt(r.expected)}</td><td>${esc(r.message)}</td></tr>`);
 
@@ -391,7 +391,9 @@ function render(d){
       <div class="sec"><h3>Duble / split w obrębie przewoźnika</h3>${duble}</div>
       <div class="sec"><h3>Niespójność poziomu usługi</h3>${sm}</div>
       <div class="sec"><h3>Przepłaty względem cennika</h3>
-        <div class="cap">Koszt transportu &gt; mediana klastra × 1,20 (≥5 obserwacji).</div>${at}</div>
+        <div class="cap">Najpierw względem <b>oficjalnego cennika</b> przewoźnika (× 1,05, gdy znamy
+          objętość/wagę), a w razie braku danych — mediana klastra × 1,20 (≥5 obserwacji).
+          Kolumna „Oczekiwane" = stawka odniesienia; źródło w kolumnie „Opis".</div>${at}</div>
     </div>
 
     <div class="panel sec">
@@ -401,8 +403,9 @@ function render(d){
         ${dlLink(d.files&&d.files.enriched_orders)}
         ${dlLink(d.files&&d.files.reference_tariff)}
       </div>
-      <p class="muted" style="margin-top:10px">audit_report.xlsx zawiera 16 zakładek (m.in. Cross_carrier,
-        Duble, Przeplaty, Nieudane_obciazone, Walidacja_vs_reczne, Podsumowanie_per_przewoznik).</p>
+      <p class="muted" style="margin-top:10px">audit_report.xlsx zawiera 17 zakładek (m.in. Cross_carrier,
+        Duble, Przeplaty, Nieudane_obciazone, Walidacja_vs_reczne, Podsumowanie_per_przewoznik);
+        ostatnia „Legenda" opisuje każdą zakładkę — pełna metodyka w sekcji na dole strony.</p>
       ${swMsg}
     </div>`;
   $('result').classList.remove('hidden');

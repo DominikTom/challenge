@@ -5,11 +5,13 @@ CLI w Pythonie, które dla danego okresu rozliczeniowego:
 1. **Przypisuje realny koszt dostawy** do każdego zamówienia, łącząc zestawienia
    trzech przewoźników (SPT, Zadbano, D&M Trans) z eksportem ERP.
 2. **Audytuje** koszty: duble (w tym cross-carrier), dostawy nieudane/anulowane
-   obciążone mimo to, niespójność poziomu usługi, przepłaty względem nauczonego
-   cennika, outliery dopłat, weryfikacje objętości, koszty operacyjne.
+   obciążone mimo to, niespójność poziomu usługi, przepłaty względem
+   **oficjalnego cennika** przewoźnika (a gdy brak danych — nauczonej mediany),
+   outliery dopłat, weryfikacje objętości, koszty operacyjne.
 3. **Uzgadnia** sumę zestawienia z kwotą netto faktury zbiorczej (tolerancja 0,01).
 4. **Wypełnia kolumnę `Faktura transportowa`** w eksporcie ERP (dziś ręcznie).
-5. **Uczy cennik referencyjny** każdego przewoźnika z danych historycznych.
+5. **Wykorzystuje wynegocjowane cenniki** (SPT PL/DE, Zadbano) i **uczy cennik
+   referencyjny** z danych historycznych jako fallback.
 
 Kod, nazwy plików i identyfikatory są po angielsku; komentarze i raporty po polsku.
 
@@ -95,8 +97,8 @@ reportlab/pytest) i serwuje `api/index.py`. Lokalnie: `vercel dev` albo
 
 | Plik | Zawartość |
 |------|-----------|
-| `enriched_orders.csv` | ERP wzbogacony: `Faktura transportowa` (uzupełniona tam, gdzie pusta), `real_transport_cost_net`, `carrier`, `service_level_matched`, `status_carrier`, `cost_breakdown_json`, `match_method`, `audit_flags`, walidacja vs ręczny wpis. |
-| `audit_report.xlsx` | Zakładki: **Cross_carrier** (na górze, z kwotą do odzyskania), Duble, Przeplaty, Nieudane_obciazone, Service_mismatch, Surcharge_outliers, Zmiany_ops, Weryfikacja_objetosci, Osierocone, Nieobciazone, Podsumowanie_per_przewoznik, Uzgodnienie_FV, Walidacja_vs_reczne, Marza, Backtest. |
+| `enriched_orders.csv` | ERP wzbogacony: `Faktura transportowa` (uzupełniona tam, gdzie pusta), `real_transport_cost_net`, `koszt_skladniki` (czytelne rozbicie kosztu), `carrier`, `service_level_matched`, `status_carrier`, `match_method`, `audit_flags`, walidacja vs ręczny wpis, `cost_breakdown_json` (techniczne, na końcu). Kwoty z przecinkiem dziesiętnym (Excel PL). |
+| `audit_report.xlsx` | Zakładki: **Cross_carrier** (na górze, z kwotą do odzyskania), Duble, Przeplaty, Nieudane_obciazone, Service_mismatch, Surcharge_outliers, Zmiany_ops, Weryfikacja_objetosci, Osierocone, Nieobciazone, Podsumowanie_per_przewoznik, Uzgodnienie_FV, Walidacja_vs_reczne, Marza, Backtest, Backtest_niezgodnosci, **Legenda** (opis każdej zakładki). |
 | `reference_tariff.json` | Nauczony cennik: mediana `TRANSPORT` per klaster `carrier × service_level × volume_bucket × postcode2`. |
 | `backtest.json` | Zgodność auto-przypisania przewoźnika z historycznym wpisem ręcznym (precision/recall). |
 
@@ -182,7 +184,7 @@ audyt i raport działają bez zmian. **Nowy przewoźnik = tylko nowy adapter.**
 | Dubel / split (intra) | ten sam `core` u 1 przewoźnika | FLAG (failed+delivered / identyczne kwoty) lub INFO (split) |
 | Nieudane obciążone | `status ∈ {FAILED, CANCELLED}` i koszt > 0 | FLAG |
 | Service mismatch | poziom przewoźnika ≠ ERP | FLAG (przewoźnik > ERP) / INFO (odwrotnie) |
-| Przepłata | `TRANSPORT` > mediana klastra × 1,20 przy ≥5 obs. | FLAG (`+X%`) / INFO no_reference |
+| Przepłata | `TRANSPORT` > **oficjalny cennik** × 1,05 (gdy znamy obj./wagę: SPT PL/DE, Zadbano), inaczej mediana klastra × 1,20 przy ≥5 obs. Nieudane/anulowane pomijane. | FLAG (`+X%`) / INFO no_reference |
 | Surcharge outlier | `FUEL/ROAD/STANDARD ÷ TRANSPORT` > 3σ (Zadbano) | FLAG |
 | Weryfikacja objętości | `VOLUME_RECHECK` > 0 | INFO / FLAG (>20% rozjazdu) |
 | Zmiany ops | `DATE_CHANGE / ADDR_CHANGE / EXTRA_ATTEMPT` | INFO (sumowane per okres) |
