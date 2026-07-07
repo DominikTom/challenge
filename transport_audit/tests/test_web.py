@@ -125,6 +125,30 @@ def test_parse_then_run_in_batches(client):
     assert set(d["files"]) == {"audit_report", "enriched_orders", "reference_tariff"}
 
 
+def test_run_accepts_gzipped_parsed_bundle(client):
+    """Duży okres: pakiet 'parsed' wysyłany skompresowany (parsed_gz)."""
+    import gzip
+    import io
+    import json
+
+    b = client.post("/api/parse", data={
+        "SPT_spec": (open(SAMPLE / "spt_demo.pdf", "rb"), "s.pdf"),
+        "SPT_invoice": (open(SAMPLE / "invoice_spt.pdf", "rb"), "i.pdf"),
+    }, content_type="multipart/form-data").get_json()
+    merged = {"carriers": b["carriers"], "zadbano_summary": b.get("zadbano_summary", {})}
+    gz = gzip.compress(json.dumps(merged).encode())
+    r = client.post("/api/run", data={
+        "period": "2026-02",
+        "parsed_gz": (io.BytesIO(gz), "parsed.json.gz"),
+        "erp": (open(SAMPLE / "erp_demo.csv", "rb"), "erp.csv"),
+    }, content_type="multipart/form-data")
+    d = r.get_json()
+    assert r.status_code == 200
+    spt = next(x for x in d["reconciliation"] if x["carrier"] == "SPT")
+    assert spt["actual_sum"] == pytest.approx(29225.96, abs=0.01)
+    assert spt["within_tolerance"] is True
+
+
 def test_parse_requires_files(client):
     r = client.post("/api/parse", data={"period": "2026-02"},
                     content_type="multipart/form-data")

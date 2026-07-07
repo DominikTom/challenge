@@ -145,6 +145,13 @@ def build_app() -> Flask:
             erp_source = (request.form.get("erp_source") or "file").strip()
             save_supabase = (request.form.get("save_supabase") or "").lower() in ("1", "true", "on", "yes")
             parsed_raw = request.form.get("parsed")  # tryb „na raty": gotowe sparsowane porcje
+            gz = request.files.get("parsed_gz")       # albo skompresowany pakiet (duże okresy)
+            if gz and gz.filename:
+                import gzip as _gzip
+                try:
+                    parsed_raw = _gzip.decompress(gz.read()).decode("utf-8")
+                except (OSError, EOFError, UnicodeDecodeError):
+                    return jsonify({"error": "Nie udało się rozpakować pakietu 'parsed_gz'."}), 400
             tmp = Path(tempfile.mkdtemp(prefix="ta_in_"))
 
             erp_path = None

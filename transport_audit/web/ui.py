@@ -192,7 +192,10 @@ const $ = id => document.getElementById(id);
 function fmt(n){return n==null?'—':Number(n).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function esc(s){return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
-const VERCEL_BODY_LIMIT = 4.4*1024*1024;  // ~4,5 MB limit żądania serverless
+// Twardy limit ciała żądania Vercela to ~4,5 MB (4 500 000 B). Trzymamy zapas na
+// narzut multipart/nagłówki -> 4,0 MB. UWAGA: to musi być MNIEJ niż 4,5 MB liczone
+// dziesiętnie (nie 4.5*1024*1024), inaczej żądanie dostaje 413 mimo „mieści się".
+const VERCEL_BODY_LIMIT = 4000000;  // 4,0 MB
 let SUPA_OK = false;
 
 (async function initConfig(){
@@ -309,24 +312,16 @@ function renderChips(key){
   ).join('');
 }
 
-// Podziel pliki na porcje: KAŻDE zestawienie (ciężkie do sparsowania) idzie
-// w osobnym żądaniu, żeby zmieścić się w limicie CZASU serwera (~60 s). Faktury
-// są małe -> grupujemy je po rozmiarze. Pojedynczych plików nie tniemy.
+// KAŻDY plik idzie w OSOBNYM żądaniu /api/parse. Dzięki temu żadne żądanie nie
+// zbliża się do limitu ciała Vercela (~4,5 MB) ani do limitu czasu (~60 s) —
+// każde parsuje jeden plik. Pojedynczego pliku nie tniemy; jeśli sam przekracza
+// limit (rzadkie), kierujemy na CLI.
 function chunkFiles(items, limit){
   const tooBig = items.find(i=>i.file.size > limit);
   if(tooBig) throw new Error('Plik „'+tooBig.file.name+'" ('+(tooBig.file.size/1048576).toFixed(1)
-    +' MB) przekracza limit ~4,5 MB pojedynczego żądania Vercela. Dla tak dużego pojedynczego '
-    +'pliku użyj CLI (bez limitu).');
-  const specs = items.filter(i=>/_spec$/.test(i.field));
-  const invs  = items.filter(i=>/_invoice$/.test(i.field));
-  const chunks = specs.map(s=>[s]);          // 1 zestawienie = 1 żądanie parsowania
-  let cur=[], sz=0;
-  for(const iv of invs){
-    if(sz+iv.file.size > limit && cur.length){ chunks.push(cur); cur=[]; sz=0; }
-    cur.push(iv); sz+=iv.file.size;
-  }
-  if(cur.length) chunks.push(cur);
-  return chunks;
+    +' MB) przekracza limit ~'+Math.round(limit/1e6)+' MB pojedynczego żądania Vercela. '
+    +'Dla tak dużego pliku użyj CLI (bez limitu).');
+  return items.map(it=>[it]);
 }
 
 // Dołóż sparsowaną porcję do zbieranej całości (per przewoźnik; sumy dopłat Zadbano).
@@ -427,14 +422,26 @@ async function runUpload(){
       mergeParsed(merged, data);
     }
 
-    // 4) FAZA 2 — audyt na złożonym, PEŁNYM okresie (mały pakiet 'parsed' + ERP)
+    // 4) FAZA 2 — audyt na złożonym, PEŁNYM okresie (pakiet 'parsed' + ERP)
     showProgress('Liczę audyt na pełnym okresie…', true);
     const fd=new FormData();
     fd.append('period', ($('period').value||'').trim());
     fd.append('erp_source', src);
     if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
     if(erpFile) fd.append('erp', erpFile);
-    fd.append('parsed', JSON.stringify(merged));
+    // pakiet parsed potrafi urosnąć przy dużym okresie -> kompresujemy (JSON pakuje się ~6-8x),
+    // żeby zmieścić się w limicie żądania; fallback do zwykłego pola gdy brak CompressionStream
+    const bundle = JSON.stringify(merged);
+    let gzOk=false;
+    if(typeof CompressionStream!=='undefined'){
+      try{
+        const gzBlob = await new Response(
+          new Blob([new TextEncoder().encode(bundle)]).stream().pipeThrough(new CompressionStream('gzip'))
+        ).blob();
+        fd.append('parsed_gz', gzBlob, 'parsed.json.gz'); gzOk=true;
+      }catch(e){ gzOk=false; }
+    }
+    if(!gzOk) fd.append('parsed', bundle);
     const res=await xhrPost('/api/run', fd, (frac,done)=>{
       if(done) showProgress('Liczę audyt…', true);
       else setProgress(frac, 'Wysyłam dane do audytu: '+Math.round(frac*100)+'%');
