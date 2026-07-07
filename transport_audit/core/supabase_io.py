@@ -129,8 +129,11 @@ class SupabaseClient:
 
 def period_bounds(period: str) -> tuple[str, str]:
     """'YYYY-MM' -> ('YYYY-MM-01', pierwszy dzień kolejnego miesiąca)."""
-    y, m = period.split("-")
-    y, m = int(y), int(m)
+    import re
+    m0 = re.fullmatch(r"(\d{4})-(\d{2})", str(period).strip() if period else "")
+    if not m0:
+        raise SupabaseError(f"Zły okres '{period}' — oczekiwano formatu RRRR-MM.")
+    y, m = int(m0.group(1)), int(m0.group(2))
     start = f"{y:04d}-{m:02d}-01"
     end = f"{y + 1:04d}-01-01" if m == 12 else f"{y:04d}-{m + 1:02d}-01"
     return start, end

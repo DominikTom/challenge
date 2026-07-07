@@ -4,6 +4,8 @@ tariff -> anomalie -> marża -> backtest. Wynik konsumują raporty i CLI.
 
 from __future__ import annotations
 
+import re
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -52,6 +54,57 @@ class PipelineResult:
     margins: MarginReport
     backtest: BacktestReport
     zadbano_summary: dict = field(default_factory=dict)
+
+
+_YYYYMM_RE = re.compile(r"(\d{4})-(\d{2})")
+_MMYYYY_RE = re.compile(r"\b(\d{1,2})[./](\d{4})\b")
+
+
+def _norm_period(value) -> str | None:
+    """Znormalizuj różne zapisy do 'YYYY-MM' (np. 'FS/38/02/2026' -> '2026-02')."""
+    if not value:
+        return None
+    s = str(value)
+    m = _YYYYMM_RE.search(s)
+    if m:
+        return f"{m.group(1)}-{m.group(2)}"
+    m = _MMYYYY_RE.search(s)  # MM/YYYY lub MM.YYYY (anchor na 4-cyfrowym roku)
+    if m:
+        mm = int(m.group(1))
+        if 1 <= mm <= 12:
+            return f"{m.group(2)}-{mm:02d}"
+    return None
+
+
+def _valid_period(period) -> bool:
+    return bool(period) and bool(_YYYYMM_RE.fullmatch(str(period).strip()))
+
+
+def detect_period(invoices: list[Invoice], deliveries: list[Delivery]) -> str | None:
+    """Wykryj okres 'YYYY-MM' z faktur/zestawień (numery, daty, nr rozliczenia)."""
+    from .util import period_of
+
+    votes: Counter = Counter()
+    for inv in invoices:
+        for cand in (inv.period, inv.invoice_no, inv.settlement_no):
+            p = _norm_period(cand)
+            if p:
+                votes[p] += 3
+        p = period_of(inv.issue_date)
+        if p:
+            votes[p] += 2
+    for d in deliveries:
+        p = (period_of(d.delivery_date) or _norm_period(d.settlement_no)
+             or _norm_period(d.invoice_no))
+        if p:
+            votes[p] += 1
+    return votes.most_common(1)[0][0] if votes else None
+
+
+def _resolve_period(period, invoices, deliveries) -> str | None:
+    if _valid_period(period):
+        return str(period).strip()
+    return detect_period(invoices, deliveries)
 
 
 def _stated_total(carrier: Carrier, adapter, spec_path: str) -> float | None:
@@ -105,6 +158,13 @@ def run_pipeline(
         stated = _stated_total(ci.carrier, adapter, ci.spec_path)
         recon_results.append(
             reconcile_run(deliveries, invoice, stated_total=stated, cfg=cfg))
+
+    # --- okres: użyj podanego (YYYY-MM) albo wykryj z dokumentów -------------
+    period = _resolve_period(period, invoices, all_deliveries)
+    if not _valid_period(period):
+        raise ValueError(
+            "Nie udało się wykryć okresu z wgranych dokumentów — podaj go ręcznie "
+            "w formacie RRRR-MM (np. 2026-02).")
 
     # --- źródło ERP: plik CSV albo Supabase (po rdzeniach z zestawień) -------
     if erp_source == "supabase":

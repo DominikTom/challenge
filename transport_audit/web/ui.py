@@ -96,8 +96,8 @@ INDEX_HTML = r"""<!doctype html>
       <div id="supaNote" class="muted hidden" style="margin-top:8px">
         ERP pobierany z Supabase po rdzeniach z zestawień (bez uploadu wielkiego CSV).
         Wgraj tylko zestawienia + faktury poniżej.</div>
-      <label>Okres (YYYY-MM)</label>
-      <input type="text" id="period" value="2026-02" placeholder="2026-02">
+      <label>Okres (opcjonalnie — puste = auto z dokumentów)</label>
+      <input type="text" id="period" placeholder="auto (np. 2026-02)">
 
       <div class="car">
         <b>SPT</b> <span class="muted">PDF „flat"</span>
@@ -229,7 +229,7 @@ async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
   const src=erpSource();
   const fd=new FormData();
-  fd.append('period', $('period').value||'2026-02');
+  fd.append('period', ($('period').value||'').trim());
   fd.append('erp_source', src);
   if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
   let total=0, any=false;
@@ -346,7 +346,7 @@ function render(d){
     </div>
 
     <div class="panel">
-      <h2>Uzgodnienie z fakturami zbiorczymi (§9)</h2>${rec}
+      <h2>Uzgodnienie z fakturami — okres ${esc(d.period||'?')} (§9)</h2>${rec}
       <p class="muted" style="margin-top:8px">Dopasowane linie: ${d.counts.matched} / ${d.counts.deliveries} ·
         osierocone: ${d.counts.orphans} · nieobciążone: ${d.counts.unbilled} ·
         zamówienia ERP: ${d.counts.erp_orders}${srcMsg}</p>

@@ -63,6 +63,22 @@ def test_cost_breakdown_json_valid(pipeline_result):
     assert carriers == {"ZADBANO", "DM_TRANS"}
 
 
+def test_norm_period_from_docs():
+    from transport_audit.core.pipeline import _norm_period
+    assert _norm_period("FS/38/02/2026") == "2026-02"
+    assert _norm_period("307/02/2026/TR") == "2026-02"
+    assert _norm_period("07/02/2026") == "2026-02"
+    assert _norm_period("FS/133/06/2026 D&M TRANS") == "2026-06"
+    assert _norm_period("2026") is None
+    assert _norm_period("") is None
+
+
+def test_detect_period_from_uploaded_docs(pipeline_result):
+    # okres wykryty z faktur/zestawień, bez podawania ręcznie
+    from transport_audit.core.pipeline import detect_period
+    assert detect_period(pipeline_result.invoices, pipeline_result.deliveries) == "2026-02"
+
+
 def test_supabase_fact_rows_keyed(pipeline_result):
     rows = build_fact_rows(pipeline_result)
     assert rows

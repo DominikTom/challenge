@@ -83,7 +83,7 @@ def build_app() -> Flask:
     @app.post("/api/run")
     def run():
         try:
-            period = (request.form.get("period") or "2026-02").strip()
+            period = (request.form.get("period") or "").strip()  # puste => auto z dokumentów
             erp_source = (request.form.get("erp_source") or "file").strip()
             save_supabase = (request.form.get("save_supabase") or "").lower() in ("1", "true", "on", "yes")
             tmp = Path(tempfile.mkdtemp(prefix="ta_in_"))
