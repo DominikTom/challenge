@@ -21,6 +21,7 @@ from .core.anomalies import (
     R_TARIFF,
     R_VOLUME,
 )
+from .core.audit_glossary import GLOSSARY, OUTPUT_FILES
 from .core.backtest import BacktestReport, carrier_from_manual_entry
 from .core.config import Config, load_config
 from .core.matcher import MatchOutcome
@@ -247,6 +248,12 @@ def write_audit_report(result: PipelineResult, path: str | Path,
     ])
     backtest_mism = pd.DataFrame(bt.mismatches)
 
+    legenda = pd.DataFrame(
+        [{"Zakładka": g["tab"], "Reguła": g["rule"], "Priorytet": g["priority"],
+          "Co pokazuje": g["what"], "Jak liczone / próg": g["how"]} for g in GLOSSARY]
+        + [{"Zakładka": f["file"], "Reguła": "plik wyjściowy", "Priorytet": "—",
+            "Co pokazuje": f["what"], "Jak liczone / próg": ""} for f in OUTPUT_FILES])
+
     tabs = [
         ("Cross_carrier", cross),
         ("Duble", duble),
@@ -264,6 +271,7 @@ def write_audit_report(result: PipelineResult, path: str | Path,
         ("Marza", margin_df),
         ("Backtest", backtest_summary),
         ("Backtest_niezgodnosci", backtest_mism),
+        ("Legenda", legenda),
     ]
 
     with pd.ExcelWriter(path, engine="xlsxwriter") as writer:

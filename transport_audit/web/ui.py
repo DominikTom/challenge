@@ -141,6 +141,13 @@ INDEX_HTML = r"""<!doctype html>
   <div id="viewCenniki" class="hidden"></div>
 </div>
 
+<div class="wrap">
+  <details class="panel" id="metodyka" style="margin-top:6px">
+    <summary style="cursor:pointer;font-weight:650;color:var(--tx);font-size:15px">📖 Metodyka — co znaczą zakładki audit_report.xlsx i jak je liczymy</summary>
+    <div id="glossaryBody" style="margin-top:14px"><p class="muted">Ładuję…</p></div>
+  </details>
+</div>
+
 <script>
 const $ = id => document.getElementById(id);
 function fmt(n){return n==null?'—':Number(n).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -224,6 +231,25 @@ function renderTariffs(t){
     + card('SPT — Niemcy (EUR)','Stawka tabelaryczna wg objętości', bracketTable(t.SPT_DE))
     + card('Zadbano (PLN)','Macierz: objętość × maks. waga przesyłki (wybór kolumny: najmniejsza ≥ waga)', matrixTable(t.ZADBANO));
 }
+
+// --- Metodyka (glosariusz zakładek audit_report) ---
+(async function initGlossary(){
+  try{
+    const g = await (await fetch('/api/glossary')).json();
+    let h='<div class="scroll"><table><thead><tr><th>Zakładka</th><th>Reguła</th><th>Priorytet</th>'
+      +'<th>Co pokazuje</th><th>Jak liczone / próg</th></tr></thead><tbody>';
+    for(const r of g.tabs){
+      const pill = /FLAG/.test(r.priority)?'FLAG':(/INFO/.test(r.priority)?'INFO':'');
+      h+=`<tr><td><b>${esc(r.tab)}</b></td><td>${esc(r.rule)}</td>`
+        +`<td>${pill?`<span class="pill ${pill}">${esc(r.priority)}</span>`:esc(r.priority)}</td>`
+        +`<td>${esc(r.what)}</td><td>${esc(r.how)}</td></tr>`;
+    }
+    h+='</tbody></table></div>';
+    h+='<p class="muted" style="margin-top:12px"><b>Pozostałe pliki wyjściowe:</b><br>'
+      + g.files.map(f=>`• <b>${esc(f.file)}</b> — ${esc(f.what)}`).join('<br>')+'</p>';
+    $('glossaryBody').innerHTML=h;
+  }catch(e){ $('glossaryBody').innerHTML='<p class="muted">Nie udało się wczytać metodyki.</p>'; }
+})();
 
 async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
