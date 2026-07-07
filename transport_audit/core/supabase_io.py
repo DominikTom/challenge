@@ -208,9 +208,12 @@ def load_erp_from_supabase(
     client = client or SupabaseClient()
     start, end = period_bounds(period)
     unique_cores = sorted({c for c in cores if c})
+    # Duża strona: RPC audit_erp nie jest inline'owany, więc każda strona
+    # re-wykonuje całą funkcję. Pobieramy wynik jednym przebiegiem (miesiąc to
+    # rząd kilku tys. wierszy); rpc_all i tak dostronicuje, gdyby było więcej.
     rows = client.rpc_all(RPC_ERP, {
         "p_cores": unique_cores, "p_start": start, "p_end": end,
-    })
+    }, page=20000)
     orders = [_erp_order_from_row(r, cfg) for r in rows]
     return build_dataset(orders)
 
