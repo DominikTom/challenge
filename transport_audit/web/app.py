@@ -50,6 +50,31 @@ def build_app() -> Flask:
     def config():
         return jsonify({"supabase_configured": _supabase_configured()})
 
+    @app.get("/api/supabase-check")
+    def supabase_check():
+        """Diagnostyka połączenia: tani probe RPC audit_erp (kilka rdzeni)."""
+        if not _supabase_configured():
+            return jsonify({"configured": False,
+                            "error": "Brak SUPABASE_URL / SUPABASE_KEY w środowisku."}), 400
+        try:
+            from ..core.config import load_config
+            from ..core.supabase_io import SupabaseClient, _erp_order_from_row
+            cfg = load_config()
+            client = SupabaseClient()
+            # p_start == p_end => okno puste, dociągamy tylko po rdzeniach (tanio)
+            rows = client.rpc_all("audit_erp", {
+                "p_cores": ["25476", "25502"],
+                "p_start": "2026-02-01", "p_end": "2026-02-01"})
+            orders = [_erp_order_from_row(r, cfg) for r in rows]
+            sample = [{"number": o.number, "core": o.core,
+                       "service_level": o.service_level.value,
+                       "products": o.products[:2]} for o in orders[:3]]
+            return jsonify({"configured": True, "ok": True,
+                            "orders_probed": len(orders), "sample": sample})
+        except Exception as exc:  # noqa: BLE001
+            return jsonify({"configured": True, "ok": False,
+                            "error": f"{type(exc).__name__}: {exc}"}), 500
+
     @app.post("/api/run")
     def run():
         try:
