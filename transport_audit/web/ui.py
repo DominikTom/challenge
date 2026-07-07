@@ -67,6 +67,27 @@ INDEX_HTML = r"""<!doctype html>
     padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer}
   .navbtn.active{background:var(--panel);color:var(--tx);border-color:var(--acc)}
   tr.sep td{border-top:2px solid var(--acc)}
+  /* wielo-plikowy picker */
+  .drop{display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:var(--panel2);
+    border:1px dashed var(--bd);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--mut);
+    margin-top:4px}
+  .drop:hover{border-color:var(--acc);color:var(--tx)}
+  .drop input{display:none}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#12161d;border:1px solid var(--bd);
+    border-radius:20px;padding:3px 6px 3px 10px;font-size:12px;max-width:100%}
+  .chip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+  .chipx{background:transparent;border:0;color:var(--mut);cursor:pointer;font-size:13px;
+    line-height:1;padding:2px 4px;border-radius:50%}
+  .chipx:hover{color:var(--bad);background:rgba(248,81,73,.12)}
+  /* pasek postępu */
+  .progress{margin-top:14px;background:var(--panel2);border:1px solid var(--bd);border-radius:8px;
+    overflow:hidden}
+  .progress .track{height:8px;background:#0b0f16;overflow:hidden}
+  .progress .bar{height:100%;background:var(--acc);width:0;transition:width .2s ease}
+  .progress.indet .bar{width:35%;animation:indet 1.1s ease-in-out infinite}
+  @keyframes indet{0%{margin-left:-35%}100%{margin-left:100%}}
+  .progress .ptxt{font-size:12px;color:var(--mut);padding:6px 10px}
 </style>
 </head>
 <body>
@@ -101,18 +122,30 @@ INDEX_HTML = r"""<!doctype html>
 
       <div class="car">
         <b>SPT</b> <span class="muted">PDF „flat"</span>
-        <label>Zestawienie (spec)</label><input type="file" id="spt_spec" accept=".pdf">
-        <label>Faktura</label><input type="file" id="spt_inv" accept=".pdf">
+        <label>Zestawienia (spec) — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".pdf" onchange="addFiles('spt_spec',this)"></label>
+        <div class="chips" id="spt_spec_chips"></div>
+        <label>Faktury — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".pdf" onchange="addFiles('spt_inv',this)"></label>
+        <div class="chips" id="spt_inv_chips"></div>
       </div>
       <div class="car">
         <b>Zadbano</b> <span class="muted">XLSX „itemized"</span>
-        <label>Zestawienie (spec)</label><input type="file" id="zad_spec" accept=".xlsx">
-        <label>Faktura</label><input type="file" id="zad_inv" accept=".pdf">
+        <label>Zestawienia (spec) — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".xlsx" onchange="addFiles('zad_spec',this)"></label>
+        <div class="chips" id="zad_spec_chips"></div>
+        <label>Faktury — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".pdf" onchange="addFiles('zad_inv',this)"></label>
+        <div class="chips" id="zad_inv_chips"></div>
       </div>
       <div class="car">
         <b>D&amp;M Trans</b> <span class="muted">PDF „flat + usługi"</span>
-        <label>Zestawienie (spec)</label><input type="file" id="dm_spec" accept=".pdf">
-        <label>Faktura</label><input type="file" id="dm_inv" accept=".pdf">
+        <label>Zestawienia (spec) — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".pdf" onchange="addFiles('dm_spec',this)"></label>
+        <div class="chips" id="dm_spec_chips"></div>
+        <label>Faktury — można wiele</label>
+        <label class="drop">➕ Dodaj pliki<input type="file" multiple accept=".pdf" onchange="addFiles('dm_inv',this)"></label>
+        <div class="chips" id="dm_inv_chips"></div>
       </div>
 
       <label class="hidden" id="saveSupaWrap" style="margin-top:12px;color:var(--tx)">
@@ -121,6 +154,10 @@ INDEX_HTML = r"""<!doctype html>
       <div class="row">
         <button class="btn" id="runBtn" onclick="runUpload()">Uruchom audyt</button>
         <button class="btn ghost" id="demoBtn" onclick="runDemo()">Pokaż na danych demo</button>
+      </div>
+      <div id="progress" class="progress hidden">
+        <div class="track"><div class="bar" id="progressBar"></div></div>
+        <div class="ptxt" id="progressTxt"></div>
       </div>
       <p class="muted" style="margin-top:10px">Wgraj min. Eksport ERP + jedno zestawienie.
         Bez plików kliknij „Pokaż na danych demo" — policzy na wbudowanym, syntetycznym
@@ -251,6 +288,56 @@ function renderTariffs(t){
   }catch(e){ $('glossaryBody').innerHTML='<p class="muted">Nie udało się wczytać metodyki.</p>'; }
 })();
 
+// --- wielo-plikowy akumulator: spec + faktury per przewoźnik ---
+const FILES = {spt_spec:[],spt_inv:[],zad_spec:[],zad_inv:[],dm_spec:[],dm_inv:[]};
+function addFiles(key, input){
+  for(const f of input.files){
+    if(!FILES[key].some(x=>x.name===f.name && x.size===f.size)) FILES[key].push(f);
+  }
+  input.value='';               // pozwól ponownie dodać ten sam plik po usunięciu
+  renderChips(key);
+}
+function removeFile(key, i){ FILES[key].splice(i,1); renderChips(key); }
+function renderChips(key){
+  const box=$(key+'_chips'); if(!box) return;
+  box.innerHTML = FILES[key].map((f,i)=>
+    `<span class="chip"><span class="nm" title="${esc(f.name)}">${esc(f.name)}</span>`
+    +`<span class="muted">${(f.size/1024).toFixed(0)} KB</span>`
+    +`<button type="button" class="chipx" title="Usuń" onclick="removeFile('${key}',${i})">✕</button></span>`
+  ).join('');
+}
+
+// --- pasek postępu ---
+function showProgress(txt, indet){
+  const p=$('progress'); p.classList.remove('hidden');
+  p.classList.toggle('indet', !!indet);
+  // indet: wyczyść inline width, żeby zadziałała animacja z CSS (.indet .bar)
+  $('progressBar').style.width = indet ? '' : '0%';
+  $('progressTxt').textContent = txt||'';
+}
+function setProgress(frac, txt){
+  $('progress').classList.remove('indet');
+  $('progressBar').style.width = Math.round(frac*100)+'%';
+  if(txt!=null) $('progressTxt').textContent = txt;
+}
+function hideProgress(){ $('progress').classList.add('hidden'); }
+
+// --- POST z paskiem postępu uploadu (XHR; fetch nie daje progresu wysyłki) ---
+function xhrPost(url, fd, onProgress){
+  return new Promise((resolve, reject)=>{
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST', url);
+    if(fd && xhr.upload && onProgress){
+      xhr.upload.onprogress = e=>{ if(e.lengthComputable) onProgress(e.loaded/e.total, false); };
+      xhr.upload.onload = ()=> onProgress(1, true);
+    }
+    xhr.onload = ()=> resolve({status:xhr.status,
+      ct:(xhr.getResponseHeader('content-type')||''), text:xhr.responseText});
+    xhr.onerror = ()=> reject(new Error('połączenie przerwane'));
+    xhr.send(fd||null);
+  });
+}
+
 async function runDemo(){ await run('/api/sample', null); }
 async function runUpload(){
   const src=erpSource();
@@ -258,47 +345,56 @@ async function runUpload(){
   fd.append('period', ($('period').value||'').trim());
   fd.append('erp_source', src);
   if($('saveSupa') && $('saveSupa').checked) fd.append('save_supabase','1');
-  let total=0, any=false;
+  let total=0;
   if(src==='file'){
     const erp=$('erp').files[0];
     if(!erp){ showErr('Wgraj plik Eksport ERP (CSV), wybierz źródło Supabase, albo użyj „Pokaż na danych demo".'); return; }
     fd.append('erp', erp); total+=erp.size;
   }
   const map=[['SPT','spt_spec','spt_inv'],['ZADBANO','zad_spec','zad_inv'],['DM_TRANS','dm_spec','dm_inv']];
-  for(const [c,s,i] of map){
-    if($(s).files[0]){ fd.append(c+'_spec',$(s).files[0]); total+=$(s).files[0].size; any=true;
-      if($(i).files[0]){ fd.append(c+'_invoice',$(i).files[0]); total+=$(i).files[0].size; } }
+  let any=false;
+  for(const [c,sk,ik] of map){
+    for(const f of FILES[sk]){ fd.append(c+'_spec', f); total+=f.size; any=true; }
+    for(const f of FILES[ik]){ fd.append(c+'_invoice', f); total+=f.size; }
   }
-  if(!any){ showErr('Wgraj co najmniej jedno zestawienie przewoźnika.'); return; }
+  if(!any){ showErr('Dodaj co najmniej jedno zestawienie przewoźnika (przycisk „➕ Dodaj pliki").'); return; }
   if(total > VERCEL_BODY_LIMIT){
     showErr('Suma wgranych plików to '+(total/1048576).toFixed(1)+' MB, a limit żądania Vercela to '
-      +'~4,5 MB. Zmniejsz Eksport.csv, użyj CLI, albo przełącz źródło ERP na „Supabase" (bez uploadu CSV).');
+      +'~4,5 MB. Zmniejsz Eksport.csv, wgraj mniej plików naraz, użyj CLI, albo przełącz źródło ERP na „Supabase".');
     return;
   }
   await run('/api/run', fd);
 }
 
-async function run(url, body){
+async function run(url, fd){
+  const isUpload = !!fd;
   setLoading(true); hideErr();
+  showProgress(isUpload ? 'Wysyłanie plików… 0%' : 'Liczę na danych demo…', !isUpload);
   try{
-    const opt = body ? {method:'POST', body} : {method:'POST'};
-    const r = await fetch(url, opt);
-    const ct = r.headers.get('content-type')||'';
-    if(!ct.includes('json')){
-      const txt=(await r.text()).slice(0,300);
-      if(r.status===413 || /too large|entity too large/i.test(txt)){
+    let res;
+    if(isUpload){
+      res = await xhrPost(url, fd, (frac, done)=>{
+        if(done) showProgress('Pliki wgrane — liczę audyt…', true);
+        else setProgress(frac, 'Wysyłanie plików… '+Math.round(frac*100)+'%');
+      });
+    } else {
+      res = await xhrPost(url, null, null);
+    }
+    if(!res.ct.includes('json')){
+      const txt=(res.text||'').slice(0,300);
+      if(res.status===413 || /too large|entity too large/i.test(txt)){
         showErr('Pliki przekraczają limit żądania Vercela (~4,5 MB) — zwykle duży Eksport.csv. '
-          +'Zmniejsz go do jednego okresu, użyj CLI, albo trybu „import ERP z Supabase".');
+          +'Zmniejsz go do jednego okresu, wgraj mniej plików, użyj CLI, albo trybu „import ERP z Supabase".');
       } else {
-        showErr('Serwer zwrócił nie-JSON ('+r.status+'): '+txt);
+        showErr('Serwer zwrócił nie-JSON ('+res.status+'): '+txt);
       }
       return;
     }
-    const data = await r.json();
-    if(!r.ok || data.error){ showErr(data.error||('Błąd '+r.status)); return; }
+    const data = JSON.parse(res.text);
+    if(res.status>=400 || data.error){ showErr(data.error||('Błąd '+res.status)); return; }
     render(data);
   }catch(e){ showErr('Nie udało się połączyć: '+e.message); }
-  finally{ setLoading(false); }
+  finally{ setLoading(false); hideProgress(); }
 }
 
 function setLoading(on){

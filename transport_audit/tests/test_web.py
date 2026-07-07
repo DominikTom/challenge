@@ -59,6 +59,29 @@ def test_upload_run(client):
     assert d["total_flags"] > 0
 
 
+def test_upload_multiple_specs_and_invoices_pool(client):
+    """Wiele zestawień + faktur jednego przewoźnika: sumy pulowane (§4).
+
+    Dwa te same zestawienia SPT + dwie te same faktury -> actual i expected
+    podwojone, więc uzgodnienie nadal się zgadza.
+    """
+    data = {
+        "period": "2026-02",
+        "erp": (open(SAMPLE / "erp_demo.csv", "rb"), "erp.csv"),
+        "SPT_spec": [(open(SAMPLE / "spt_demo.pdf", "rb"), "a.pdf"),
+                     (open(SAMPLE / "spt_demo.pdf", "rb"), "b.pdf")],
+        "SPT_invoice": [(open(SAMPLE / "invoice_spt.pdf", "rb"), "i1.pdf"),
+                        (open(SAMPLE / "invoice_spt.pdf", "rb"), "i2.pdf")],
+    }
+    r = client.post("/api/run", data=data, content_type="multipart/form-data")
+    d = r.get_json()
+    assert r.status_code == 200
+    spt = next(x for x in d["reconciliation"] if x["carrier"] == "SPT")
+    assert spt["actual_sum"] == pytest.approx(2 * 29225.96, abs=0.01)
+    assert spt["expected_net"] == pytest.approx(2 * 29225.96, abs=0.01)
+    assert spt["within_tolerance"] is True
+
+
 def test_upload_run_without_invoice_still_computes(client):
     # bez faktury: audyt liczy koszty, ale nie ma czego uzgadniać (expected_net=None)
     data = {

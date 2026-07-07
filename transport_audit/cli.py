@@ -59,11 +59,16 @@ def parse_carrier_spec(spec: str) -> CarrierInput:
 
     if "spec" not in params:
         raise typer.BadParameter(f"Brak 'spec=' w --carrier {spec!r}")
+    # wiele zestawień/faktur jednego przewoźnika: 'spec=a.pdf|b.pdf'
+    spec_paths = [s.strip() for s in params["spec"].split("|") if s.strip()]
+    invoice_paths = [s.strip() for s in params.get("invoice", "").split("|") if s.strip()]
     return CarrierInput(
         carrier=carrier,
-        spec_path=params["spec"],
-        invoice_path=params.get("invoice"),
+        spec_path=spec_paths[0] if len(spec_paths) == 1 else None,
+        invoice_path=invoice_paths[0] if len(invoice_paths) == 1 else None,
         settlement_no=params.get("settlement"),
+        spec_paths=spec_paths if len(spec_paths) > 1 else [],
+        invoice_paths=invoice_paths if len(invoice_paths) > 1 else [],
     )
 
 

@@ -11,11 +11,26 @@ import traceback
 from pathlib import Path
 
 from flask import Flask, jsonify, request
+from werkzeug.utils import secure_filename
 
 from ..core.models import Carrier
 from ..core.pipeline import CarrierInput
 from .service import run_audit
 from .ui import INDEX_HTML
+
+
+def _save_uploads(files, tmp: Path, prefix: str) -> list[str]:
+    """Zapisz wgrane pliki do katalogu tymczasowego; zwróć listę ścieżek.
+
+    Nazwy sanityzujemy i prefiksujemy indeksem, żeby uniknąć kolizji i
+    wyjścia poza katalog (path traversal)."""
+    paths: list[str] = []
+    for idx, f in enumerate(files):
+        safe = secure_filename(f.filename) or f"plik_{idx}"
+        p = tmp / f"{prefix}_{idx}_{safe}"
+        f.save(p)
+        paths.append(str(p))
+    return paths
 
 
 def _supabase_configured() -> bool:
@@ -106,19 +121,16 @@ def build_app() -> Flask:
 
             carrier_inputs: list[CarrierInput] = []
             for field, carrier in _CARRIER_FIELDS.items():
-                spec_file = request.files.get(f"{field}_spec")
-                if not spec_file or not spec_file.filename:
+                spec_files = [f for f in request.files.getlist(f"{field}_spec")
+                              if f and f.filename]
+                if not spec_files:
                     continue
-                spec_path = tmp / f"{field}_spec_{spec_file.filename}"
-                spec_file.save(spec_path)
-                invoice_path = None
-                inv_file = request.files.get(f"{field}_invoice")
-                if inv_file and inv_file.filename:
-                    invoice_path = tmp / f"{field}_inv_{inv_file.filename}"
-                    inv_file.save(invoice_path)
-                    invoice_path = str(invoice_path)
+                spec_paths = _save_uploads(spec_files, tmp, f"{field}_spec")
+                inv_files = [f for f in request.files.getlist(f"{field}_invoice")
+                             if f and f.filename]
+                invoice_paths = _save_uploads(inv_files, tmp, f"{field}_inv")
                 carrier_inputs.append(CarrierInput(
-                    carrier=carrier, spec_path=str(spec_path), invoice_path=invoice_path))
+                    carrier=carrier, spec_paths=spec_paths, invoice_paths=invoice_paths))
 
             if not carrier_inputs:
                 return jsonify({"error": "Wgraj co najmniej jedno zestawienie przewoźnika."}), 400

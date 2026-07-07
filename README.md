@@ -43,6 +43,10 @@ python -m transport_audit run \
 
 - `--carrier` można podać **wiele razy** (także wiele rozliczeń D&M w miesiącu —
   reconciler paruje każdą fakturę z jej rozliczeniem po numerze + sumie).
+- Wiele zestawień/faktur **jednego** przewoźnika: rozdziel je `|`
+  (`spec=a.pdf|b.pdf,invoice=x.pdf|y.pdf`) — dostawy są sumowane, a netto faktur
+  łączone w jedno uzgodnienie (Σ zestawień vs Σ faktur). W aplikacji web służy do
+  tego przycisk „➕ Dodaj pliki" (można dodać kilka plików per przewoźnik).
 - `--load-supabase` upsertuje fakty do `fact_delivery_costs`
   (klucz `order_core + period + carrier`); bez poświadczeń zapisuje
   `fact_delivery_costs.jsonl` do ręcznego importu.

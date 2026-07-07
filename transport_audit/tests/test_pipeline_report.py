@@ -101,6 +101,34 @@ def test_detect_period_from_uploaded_docs(pipeline_result):
     assert detect_period(pipeline_result.invoices, pipeline_result.deliveries) == "2026-02"
 
 
+def test_combine_invoices_sums_net():
+    """Wiele faktur jednego przewoźnika -> jedna z sumą netto (§4)."""
+    from transport_audit.core.pipeline import _combine_invoices
+    from transport_audit.core.models import Carrier, Invoice
+
+    def inv(no, net):
+        return Invoice(Carrier.SPT, no, None, None, None, "2026-02", net,
+                       None, None, None)
+    c = _combine_invoices([inv("A", 100.0), inv("B", 50.0)], Carrier.SPT)
+    assert c.net == 150.0
+    assert "A" in c.invoice_no and "B" in c.invoice_no
+    assert _combine_invoices([], Carrier.SPT) is None
+    # jedna faktura -> zwrócona bez zmian
+    assert _combine_invoices([inv("A", 100.0)], Carrier.SPT).net == 100.0
+
+
+def test_carrier_input_all_specs_backcompat():
+    """CarrierInput działa i dla pojedynczego pola, i dla list."""
+    from transport_audit.core.pipeline import CarrierInput
+    from transport_audit.core.models import Carrier
+    single = CarrierInput(Carrier.SPT, spec_path="a.pdf", invoice_path="i.pdf")
+    assert single.all_specs() == ["a.pdf"] and single.all_invoices() == ["i.pdf"]
+    multi = CarrierInput(Carrier.SPT, spec_paths=["a.pdf", "b.pdf"],
+                         invoice_paths=["i.pdf", "j.pdf"])
+    assert multi.all_specs() == ["a.pdf", "b.pdf"]
+    assert multi.all_invoices() == ["i.pdf", "j.pdf"]
+
+
 def test_supabase_fact_rows_keyed(pipeline_result):
     rows = build_fact_rows(pipeline_result)
     assert rows
